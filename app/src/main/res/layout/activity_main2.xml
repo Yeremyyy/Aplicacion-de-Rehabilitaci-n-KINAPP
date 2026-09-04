@@ -12,14 +12,17 @@
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="44dp"
         android:text="KINAPP"
         android:textColor="#EFE7E7"
         android:textColorLink="#FF7474"
         android:textSize="34sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="144dp"
-        tools:layout_editor_absoluteY="139dp" />
+        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0"
+        tools:layout_editor_absoluteX="131dp" />
 
     <TextView
         android:id="@+id/textView2"
@@ -31,87 +34,124 @@
         android:textColor="#F0EAEA"
         android:textSize="16sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="128dp"
-        tools:layout_editor_absoluteY="197dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.468"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="95dp" />
 
     <Button
         android:id="@+id/btn_paciente"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Paciente"
-        tools:layout_editor_absoluteX="77dp"
-        tools:layout_editor_absoluteY="243dp" />
+        app:layout_constraintEnd_toStartOf="@+id/btn_especialista"
+        app:layout_constraintHorizontal_bias="0.347"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:layout_editor_absoluteY="150dp" />
 
     <Button
         android:id="@+id/btn_especialista"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginEnd="72dp"
         android:text="Especialista"
-        tools:layout_editor_absoluteX="202dp"
-        tools:layout_editor_absoluteY="243dp" />
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteY="150dp" />
 
     <TextView
         android:id="@+id/lbl_correo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="15dp"
         android:text="Correo"
         android:textColor="#FFFFFF"
         android:textSize="16sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="52dp"
-        tools:layout_editor_absoluteY="326dp" />
+        app:layout_constraintBottom_toTopOf="@+id/txt_email"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.132"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/btn_paciente" />
 
     <EditText
         android:id="@+id/txt_email"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="250dp"
+        android:layout_height="51dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginBottom="21dp"
         android:ems="10"
+        android:hint="algo@gmail.com"
         android:inputType="textEmailAddress"
         android:textColor="#F8F8F8"
         android:textCursorDrawable="@color/design_default_color_secondary"
         android:textSize="16sp"
         android:visibility="visible"
-        tools:layout_editor_absoluteX="51dp"
-        tools:layout_editor_absoluteY="354dp" />
+        app:layout_constraintBottom_toTopOf="@+id/lbl_Contrasena"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.298"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lbl_correo" />
 
     <TextView
         android:id="@+id/lbl_Contrasena"
         android:layout_width="wrap_content"
-        android:layout_height="19dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="13dp"
+        android:layout_marginBottom="19dp"
         android:text="Contraseña"
         android:textColor="#F6F6F6"
         android:textSize="16sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="52dp"
-        tools:layout_editor_absoluteY="411dp" />
+        app:layout_constraintBottom_toTopOf="@+id/txt_contrasena"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.146"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_email" />
 
     <EditText
         android:id="@+id/txt_contrasena"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="248dp"
+        android:layout_height="49dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="7dp"
         android:ems="10"
+        android:hint="Sfasf23."
         android:inputType="textPassword"
-        tools:layout_editor_absoluteX="51dp"
-        tools:layout_editor_absoluteY="440dp" />
+        android:textColor="#FBFBFB"
+        app:layout_constraintBottom_toTopOf="@+id/lbl_recuperarCuenta"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.298"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lbl_Contrasena" />
 
     <Button
         android:id="@+id/btn_iniciarSesion"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="59dp"
+        android:layout_marginBottom="84dp"
         android:text="Iniciar sesion"
         android:textColorLink="#BF2B2B"
         android:textSize="20sp"
-        tools:layout_editor_absoluteX="120dp"
-        tools:layout_editor_absoluteY="547dp" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/lbl_recuperarCuenta" />
 
     <TextView
         android:id="@+id/lbl_recuperarCuenta"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="63dp"
         android:text="¿Olvidaste tu contraseña?"
         android:textColor="#FBFBFB"
         android:textSize="16sp"
         android:textStyle="bold"
-        tools:layout_editor_absoluteX="181dp"
-        tools:layout_editor_absoluteY="498dp" />
+        app:layout_constraintBottom_toTopOf="@+id/btn_iniciarSesion"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.831"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/txt_contrasena" />
 </androidx.constraintlayout.widget.ConstraintLayout>
