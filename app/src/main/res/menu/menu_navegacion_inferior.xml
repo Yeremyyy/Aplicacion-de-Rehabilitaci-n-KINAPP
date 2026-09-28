@@ -9,12 +9,12 @@
     <item
         android:id="@+id/nav_rutinas"
         android:icon="@android:drawable/ic_menu_agenda"
-        android:title="Rutinas" />
+        android:title="MIs Rutinas" />
 
     <item
         android:id="@+id/nav_progreso"
         android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="Progreso" />
+        android:title="Mi Progreso" />
 
     <item
         android:id="@+id/nav_perfil"
