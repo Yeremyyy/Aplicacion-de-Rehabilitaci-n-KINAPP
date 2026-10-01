@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Kinapp">
         <activity
-            android:name=".LoginActivity"
+            android:name=".vista.LoginActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".PanelActivity"
+            android:name=".vista.PanelActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
@@ -30,43 +30,43 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".CatalogoActivity"
+            android:name=".vista.CatalogoActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ProgresoActivity"
+            android:name=".vista.ProgresoActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ListaMensajesActivity"
+            android:name=".vista.ListaMensajesActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ChatActivity"
+            android:name=".vista.ChatActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".RegistroActivity"
+            android:name=".vista.RegistroActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".DetalleEjercicioActivity"
+            android:name=".vista.DetalleEjercicioActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".CamaraGuiadaActivity"
+            android:name=".vista.CamaraGuiadaActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".PreparacionCamaraActivity"
+            android:name=".vista.PreparacionCamaraActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ResumenRutinaActivity"
+            android:name=".vista.ResumenRutinaActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".PerfilActivity"
+            android:name=".vista.PerfilActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
@@ -74,7 +74,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".RutinasActivity"
+            android:name=".vista.RutinasActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
     </application>

@@ -3,22 +3,22 @@
 
     <item
         android:id="@+id/nav_inicio"
-        android:icon="@android:drawable/ic_menu_home"
+        android:icon="@drawable/ic_home"
         android:title="Inicio" />
 
     <item
         android:id="@+id/nav_rutinas"
-        android:icon="@android:drawable/ic_menu_agenda"
-        android:title="MIs Rutinas" />
+        android:icon="@drawable/ic_rutinas"
+        android:title="Rutinas" />
 
     <item
         android:id="@+id/nav_progreso"
-        android:icon="@android:drawable/ic_menu_sort_by_size"
-        android:title="Mi Progreso" />
+        android:icon="@drawable/ic_progreso"
+        android:title="Progreso" />
 
     <item
         android:id="@+id/nav_perfil"
-        android:icon="@android:drawable/ic_menu_myplaces"
+        android:icon="@drawable/ic_perfil"
         android:title="Perfil" />
 
 </menu>
