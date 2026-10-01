@@ -8,7 +8,7 @@ public class UsuarioController {
     private static ArrayList<Usuario> listaUsuarios = new ArrayList<>();
 
     static {
-        listaUsuarios.add(new Usuario("admin@gmail.cl", "123456", "Paciente pepito"));
+        listaUsuarios.add(new Usuario("admin@kinapp.cl", "123456", "Paciente Demo"));
     }
 
     public static boolean registrarUsuario(String correo, String contrasena, String nombre) {
@@ -28,5 +28,14 @@ public class UsuarioController {
             }
         }
         return false;
+    }
+
+    public static Usuario getUsuario(String correo) {
+        for (Usuario u : listaUsuarios) {
+            if (u.getCorreo().equals(correo)) {
+                return u;
+            }
+        }
+        return null;
     }
 }

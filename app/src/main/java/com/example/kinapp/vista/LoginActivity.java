@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.kinapp.R;
 import com.example.kinapp.controlador.UsuarioController;
+import com.example.kinapp.modelo.Usuario;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -48,8 +49,10 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 if (UsuarioController.validarLogin(correo, pass)) {
+                    Usuario u = UsuarioController.getUsuario(correo);
                     Toast.makeText(LoginActivity.this, "¡Bienvenido!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginActivity.this, PanelActivity.class);
+                    intent.putExtra("NOMBRE_USUARIO", u.getNombre());
                     startActivity(intent);
                     finish();
                 } else {
