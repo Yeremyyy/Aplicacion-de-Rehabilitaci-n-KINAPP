@@ -16,6 +16,7 @@ public class LoginActivity extends AppCompatActivity {
     private EditText etCorreo;
     private EditText etContrasena;
     private Button btnIniciarSesion;
+    private Button btnCrearCuenta;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,6 +26,15 @@ public class LoginActivity extends AppCompatActivity {
         etCorreo = findViewById(R.id.txt_email);
         etContrasena = findViewById(R.id.txt_contrasena);
         btnIniciarSesion = findViewById(R.id.btn_iniciarSesion);
+        btnCrearCuenta = findViewById(R.id.btn_CrearCuenta);
+
+        btnCrearCuenta.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, RegistroActivity.class);
+                startActivity(intent);
+            }
+        });
 
         btnIniciarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
