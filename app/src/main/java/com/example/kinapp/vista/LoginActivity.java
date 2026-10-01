@@ -1,26 +1,51 @@
 package com.example.kinapp.vista;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.example.kinapp.R;
+import com.example.kinapp.controlador.UsuarioController;
 
 public class LoginActivity extends AppCompatActivity {
+
+    private EditText etCorreo;
+    private EditText etContrasena;
+    private Button btnIniciarSesion;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_login);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        etCorreo = findViewById(R.id.txt_email);
+        etContrasena = findViewById(R.id.txt_contrasena);
+        btnIniciarSesion = findViewById(R.id.btn_iniciarSesion);
+
+        btnIniciarSesion.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String correo = etCorreo.getText().toString().trim();
+                String pass = etContrasena.getText().toString().trim();
+
+                if (correo.isEmpty() || pass.isEmpty()) {
+                    Toast.makeText(LoginActivity.this, "Por favor, llena todos los campos", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (UsuarioController.validarLogin(correo, pass)) {
+                    Toast.makeText(LoginActivity.this, "¡Bienvenido!", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(LoginActivity.this, PanelActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(LoginActivity.this, "Correo o contraseña incorrectos", Toast.LENGTH_LONG).show();
+                }
+            }
         });
     }
 }
