@@ -45,7 +45,7 @@
                 android:layout_height="32dp"
                 android:layout_marginTop="32dp"
                 android:layout_marginEnd="24dp"
-                android:src="@android:drawable/ic_popup_reminder"
+                android:src="@drawable/ic_notificaciones"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -134,7 +134,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@android:drawable/ic_menu_agenda" />
+                        android:src="@drawable/ic_catalogoejer" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -155,7 +155,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@android:drawable/ic_menu_sort_by_size" />
+                        android:src="@drawable/ic_miprogreso" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -176,7 +176,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@android:drawable/ic_menu_camera" />
+                        android:src="@drawable/ic_camaraguia" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -197,7 +197,7 @@
                     <ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
-                        android:src="@android:drawable/ic_dialog_email" />
+                        android:src="@drawable/ic_mensajes" />
 
                     <TextView
                         android:layout_width="wrap_content"
