@@ -1,6 +1,7 @@
 package com.example.kinapp.vista;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -22,6 +23,18 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        SharedPreferences prefs = getSharedPreferences("SesionKinApp", MODE_PRIVATE);
+        String correoGuardado = prefs.getString("correo_usuario", null);
+
+        if (correoGuardado != null) {
+            UsuarioController.restaurarSesion(correoGuardado);
+            Intent intent = new Intent(LoginActivity.this, PanelActivity.class);
+            startActivity(intent);
+            finish();
+            return;
+        }
+
         setContentView(R.layout.activity_login);
 
         etCorreo = findViewById(R.id.txt_email);
@@ -49,10 +62,13 @@ public class LoginActivity extends AppCompatActivity {
                 }
 
                 if (UsuarioController.validarLogin(correo, pass)) {
-                    Usuario u = UsuarioController.getUsuario(correo);
+                    SharedPreferences prefs = getSharedPreferences("SesionKinApp", MODE_PRIVATE);
+                    SharedPreferences.Editor editor = prefs.edit();
+                    editor.putString("correo_usuario", correo);
+                    editor.apply();
+
                     Toast.makeText(LoginActivity.this, "¡Bienvenido!", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(LoginActivity.this, PanelActivity.class);
-                    intent.putExtra("NOMBRE_USUARIO", u.getNombre());
                     startActivity(intent);
                     finish();
                 } else {

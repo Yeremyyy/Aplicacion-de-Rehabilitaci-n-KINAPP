@@ -39,4 +39,13 @@ public class UsuarioController {
     public static void cerrarSesion() {
         usuarioActual = null;
     }
+
+    public static void restaurarSesion(String correo) {
+        for (Usuario u : listaUsuarios) {
+            if (u.getCorreo().equals(correo)) {
+                usuarioActual = u;
+                return;
+            }
+        }
+    }
 }
