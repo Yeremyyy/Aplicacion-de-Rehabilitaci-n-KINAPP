@@ -9,6 +9,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.kinapp.R;
+import com.example.kinapp.controlador.UsuarioController;
+import com.example.kinapp.modelo.Usuario;
 
 public class PerfilActivity extends AppCompatActivity {
 
@@ -27,12 +29,16 @@ public class PerfilActivity extends AppCompatActivity {
         btnCerrarSesion = findViewById(R.id.btn_cerrar_sesion);
         bottomNav = findViewById(R.id.barra_navegacion_perfil);
 
-        txtNombre.setText("Paciente");
-        txtCorreo.setText("admin@gmail.cl");
+        Usuario u = UsuarioController.getUsuarioActual();
+        if (u != null) {
+            txtNombre.setText(u.getNombre());
+            txtCorreo.setText(u.getCorreo());
+        }
 
         btnCerrarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                UsuarioController.cerrarSesion();
                 Intent intent = new Intent(PerfilActivity.this, LoginActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                 startActivity(intent);
