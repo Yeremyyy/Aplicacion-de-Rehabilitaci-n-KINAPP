@@ -28,14 +28,18 @@
 
                 <ImageView
                     android:id="@+id/btn_volver_progreso"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:padding="12dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackgroundBorderless"
                     android:src="@android:drawable/ic_menu_revert" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="8dp"
                     android:text="Mi progreso"
                     android:textSize="24sp"
                     android:textStyle="bold" />
@@ -61,7 +65,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        tools:text="78%" />
+                        tools:text="0%" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -84,7 +88,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        tools:text="5" />
+                        tools:text="0" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -108,7 +112,7 @@
                         android:layout_height="wrap_content"
                         android:textSize="24sp"
                         android:textStyle="bold"
-                        tools:text="42" />
+                        tools:text="0" />
 
                     <TextView
                         android:layout_width="wrap_content"
@@ -139,7 +143,7 @@
                         android:layout_marginBottom="12dp"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        tools:text="Septiembre" />
+                        tools:text="Mes Actual" />
 
                     <GridLayout
                         android:id="@+id/grid_calendario"
@@ -148,16 +152,16 @@
                         android:layout_marginBottom="16dp"
                         android:columnCount="7">
 
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" />
-                        <View android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" />
+                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" android:background="#E0E0E0" />
+                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" android:background="#E0E0E0" />
+                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" android:background="#E0E0E0" />
+                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" android:background="#E0E0E0" />
+                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" android:background="#E0E0E0" />
+                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" android:background="#E0E0E0" />
+                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" android:background="#E0E0E0" />
+                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" android:background="#E0E0E0" />
+                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" android:background="#E0E0E0" />
+                        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:layout_margin="4dp" android:background="#E0E0E0" />
                     </GridLayout>
 
                     <LinearLayout
@@ -192,7 +196,6 @@
                             android:text="Hoy"
                             android:textSize="12sp" />
                     </LinearLayout>
-
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -200,7 +203,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:text="Avance por ejercicio"
+                android:text="Avance por trayectoria"
                 android:textSize="16sp" />
 
             <LinearLayout
@@ -220,14 +223,14 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textSize="14sp"
-                        tools:text="Rotación de hombro" />
+                        android:text="Rotación de hombro" />
 
                     <TextView
                         android:id="@+id/txt_progreso_hombro"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
-                        tools:text="12/15" />
+                        tools:text="0/15" />
                 </LinearLayout>
 
                 <ProgressBar
@@ -235,7 +238,7 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:progress="80" />
+                    tools:progress="0" />
             </LinearLayout>
 
             <LinearLayout
@@ -254,14 +257,14 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:textSize="14sp"
-                        tools:text="Elevación de rodilla" />
+                        android:text="Sentadillas asistidas" />
 
                     <TextView
                         android:id="@+id/txt_progreso_rodilla"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:textSize="14sp"
-                        tools:text="6/20" />
+                        tools:text="0/20" />
                 </LinearLayout>
 
                 <ProgressBar
@@ -269,7 +272,7 @@
                     style="?android:attr/progressBarStyleHorizontal"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    tools:progress="30" />
+                    tools:progress="0" />
             </LinearLayout>
 
         </LinearLayout>

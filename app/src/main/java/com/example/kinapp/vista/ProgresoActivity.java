@@ -79,15 +79,13 @@ public class ProgresoActivity extends AppCompatActivity {
     }
 
     private void cargarDatosSimulados() {
-        txtAdherencia.setText("78%");
-        txtRacha.setText("5");
-        txtSesiones.setText("42");
-        txtMesActual.setText("Octubre");
-
-        txtProgresoHombro.setText("12/15");
-        pbHombro.setProgress(80);
-
-        txtProgresoRodilla.setText("6/20");
-        pbRodilla.setProgress(30);
+        txtAdherencia.setText("0%");
+        txtRacha.setText("0");
+        txtSesiones.setText("0");
+        txtMesActual.setText("Mes actual");
+        txtProgresoHombro.setText("0/15");
+        pbHombro.setProgress(0);
+        txtProgresoRodilla.setText("0/20");
+        pbRodilla.setProgress(0);
     }
 }
