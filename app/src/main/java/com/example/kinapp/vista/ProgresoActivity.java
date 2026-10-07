@@ -1,26 +1,93 @@
 package com.example.kinapp.vista;
 
+import android.content.Intent;
 import android.os.Bundle;
-
-import androidx.activity.EdgeToEdge;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.kinapp.R;
 
 public class ProgresoActivity extends AppCompatActivity {
 
+    private ImageView btnVolver;
+    private TextView txtAdherencia;
+    private TextView txtRacha;
+    private TextView txtSesiones;
+    private TextView txtMesActual;
+    private TextView txtProgresoHombro;
+    private ProgressBar pbHombro;
+    private TextView txtProgresoRodilla;
+    private ProgressBar pbRodilla;
+    private BottomNavigationView bottomNav;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_progreso);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        btnVolver = findViewById(R.id.btn_volver_progreso);
+        txtAdherencia = findViewById(R.id.txt_adherencia_val);
+        txtRacha = findViewById(R.id.txt_racha_val);
+        txtSesiones = findViewById(R.id.txt_sesiones_val);
+        txtMesActual = findViewById(R.id.txt_mes_actual);
+        txtProgresoHombro = findViewById(R.id.txt_progreso_hombro);
+        pbHombro = findViewById(R.id.pb_hombro);
+        txtProgresoRodilla = findViewById(R.id.txt_progreso_rodilla);
+        pbRodilla = findViewById(R.id.pb_rodilla);
+        bottomNav = findViewById(R.id.barra_navegacion_progreso);
+
+        cargarDatosSimulados();
+
+        btnVolver.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(ProgresoActivity.this, PanelActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+            }
         });
+
+        bottomNav.setSelectedItemId(R.id.nav_progreso);
+
+        bottomNav.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_progreso) {
+                return true;
+            } else if (itemId == R.id.nav_inicio) {
+                startActivity(new Intent(ProgresoActivity.this, PanelActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_rutinas) {
+                startActivity(new Intent(ProgresoActivity.this, RutinasActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            } else if (itemId == R.id.nav_perfil) {
+                startActivity(new Intent(ProgresoActivity.this, PerfilActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            }
+            return false;
+        });
+    }
+
+    private void cargarDatosSimulados() {
+        txtAdherencia.setText("78%");
+        txtRacha.setText("5");
+        txtSesiones.setText("42");
+        txtMesActual.setText("Octubre");
+
+        txtProgresoHombro.setText("12/15");
+        pbHombro.setProgress(80);
+
+        txtProgresoRodilla.setText("6/20");
+        pbRodilla.setProgress(30);
     }
 }

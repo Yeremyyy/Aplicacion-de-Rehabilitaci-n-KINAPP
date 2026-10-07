@@ -27,8 +27,8 @@ public class PerfilActivity extends AppCompatActivity {
         btnCerrarSesion = findViewById(R.id.btn_cerrar_sesion);
         bottomNav = findViewById(R.id.barra_navegacion_perfil);
 
-        txtNombre.setText("Paciente Demo");
-        txtCorreo.setText("admin@kinapp.cl");
+        txtNombre.setText("Paciente");
+        txtCorreo.setText("admin@gmail.cl");
 
         btnCerrarSesion.setOnClickListener(new View.OnClickListener() {
             @Override
