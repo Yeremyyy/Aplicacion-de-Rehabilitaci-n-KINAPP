@@ -12,7 +12,7 @@ public class UsuarioController {
 
     private static Usuario usuarioActual = null;
 
-    public static boolean registrarUsuario(Context context, String correo, String contrasena, String nombre) {
+    public static boolean registrarUsuario(Context context, String correo, String contrasena, String nombre, String fechaNac) {
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -20,6 +20,8 @@ public class UsuarioController {
         values.put(UsuarioEntry.COLUMN_CORREO, correo);
         values.put(UsuarioEntry.COLUMN_CONTRASENA, contrasena);
         values.put(UsuarioEntry.COLUMN_NOMBRE, nombre);
+        values.put(UsuarioEntry.COLUMN_FECHA, fechaNac);
+        values.put(UsuarioEntry.COLUMN_TELEFONO, "");
 
         long newRowId = db.insert(UsuarioEntry.TABLE_NAME, null, values);
         db.close();
@@ -34,7 +36,9 @@ public class UsuarioController {
         String[] projection = {
                 UsuarioEntry.COLUMN_CORREO,
                 UsuarioEntry.COLUMN_CONTRASENA,
-                UsuarioEntry.COLUMN_NOMBRE
+                UsuarioEntry.COLUMN_NOMBRE,
+                UsuarioEntry.COLUMN_FECHA,
+                UsuarioEntry.COLUMN_TELEFONO
         };
 
         String selection = UsuarioEntry.COLUMN_CORREO + " = ? AND " + UsuarioEntry.COLUMN_CONTRASENA + " = ?";
@@ -46,7 +50,9 @@ public class UsuarioController {
         if (cursor.moveToFirst()) {
             isValid = true;
             String nombre = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
-            usuarioActual = new Usuario(correo, contrasena, nombre);
+            String fecha = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_FECHA));
+            String tel = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_TELEFONO));
+            usuarioActual = new Usuario(correo, contrasena, nombre, fecha, tel);
         }
 
         cursor.close();
@@ -61,7 +67,9 @@ public class UsuarioController {
         String[] projection = {
                 UsuarioEntry.COLUMN_CORREO,
                 UsuarioEntry.COLUMN_CONTRASENA,
-                UsuarioEntry.COLUMN_NOMBRE
+                UsuarioEntry.COLUMN_NOMBRE,
+                UsuarioEntry.COLUMN_FECHA,
+                UsuarioEntry.COLUMN_TELEFONO
         };
 
         String selection = UsuarioEntry.COLUMN_CORREO + " = ?";
@@ -72,46 +80,55 @@ public class UsuarioController {
         if (cursor.moveToFirst()) {
             String nombre = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
             String contrasena = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_CONTRASENA));
-            usuarioActual = new Usuario(correo, contrasena, nombre);
+            String fecha = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_FECHA));
+            String tel = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_TELEFONO));
+            usuarioActual = new Usuario(correo, contrasena, nombre, fecha, tel);
         }
 
         cursor.close();
         db.close();
     }
 
-    public static boolean actualizarUsuario(Context context, String correoViejo, String nuevoNombre) {
+    public static boolean actualizarTelefono(Context context, String nuevoTelefono) {
+        if (usuarioActual == null) return false;
+
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        values.put(UsuarioEntry.COLUMN_NOMBRE, nuevoNombre);
+        values.put(UsuarioEntry.COLUMN_TELEFONO, nuevoTelefono);
 
         String selection = UsuarioEntry.COLUMN_CORREO + " = ?";
-        String[] selectionArgs = {correoViejo};
+        String[] selectionArgs = {usuarioActual.getCorreo()};
 
         int count = db.update(UsuarioEntry.TABLE_NAME, values, selection, selectionArgs);
         db.close();
 
-        if(count > 0 && usuarioActual != null) {
-            usuarioActual = new Usuario(usuarioActual.getCorreo(), usuarioActual.getContrasena(), nuevoNombre);
+        if(count > 0) {
+            usuarioActual = new Usuario(usuarioActual.getCorreo(), usuarioActual.getContrasena(), usuarioActual.getNombre(), usuarioActual.getFechaNac(), nuevoTelefono);
         }
         return count > 0;
     }
 
-    public static boolean eliminarUsuario(Context context, String correo) {
+    public static boolean actualizarContrasena(Context context, String nuevaContrasena) {
+        if (usuarioActual == null) return false;
+
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
-        String selection = UsuarioEntry.COLUMN_CORREO + " = ?";
-        String[] selectionArgs = {correo};
+        ContentValues values = new ContentValues();
+        values.put(UsuarioEntry.COLUMN_CONTRASENA, nuevaContrasena);
 
-        int deletedRows = db.delete(UsuarioEntry.TABLE_NAME, selection, selectionArgs);
+        String selection = UsuarioEntry.COLUMN_CORREO + " = ?";
+        String[] selectionArgs = {usuarioActual.getCorreo()};
+
+        int count = db.update(UsuarioEntry.TABLE_NAME, values, selection, selectionArgs);
         db.close();
 
-        if(deletedRows > 0) {
-            cerrarSesion();
+        if(count > 0) {
+            usuarioActual = new Usuario(usuarioActual.getCorreo(), nuevaContrasena, usuarioActual.getNombre(), usuarioActual.getFechaNac(), usuarioActual.getTelefono());
         }
-        return deletedRows > 0;
+        return count > 0;
     }
 
     public static Usuario getUsuarioActual() {
