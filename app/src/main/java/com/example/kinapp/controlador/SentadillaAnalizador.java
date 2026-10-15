@@ -25,6 +25,7 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
     public interface SentadillaListener {
         void onRepeticion(int reps);
         void onFeedback(String mensaje, boolean usarVoz);
+        void onPoseDetectada(Pose pose, int width, int height);
     }
 
     public SentadillaAnalizador(SentadillaListener listener) {
@@ -40,13 +41,15 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
     public void analyze(@NonNull ImageProxy imageProxy) {
         Image mediaImage = imageProxy.getImage();
         if (mediaImage != null) {
-            InputImage image = InputImage.fromMediaImage(mediaImage, imageProxy.getImageInfo().getRotationDegrees());
+            int rotation = imageProxy.getImageInfo().getRotationDegrees();
+            int width = (rotation == 90 || rotation == 270) ? mediaImage.getHeight() : mediaImage.getWidth();
+            int height = (rotation == 90 || rotation == 270) ? mediaImage.getWidth() : mediaImage.getHeight();
+
+            InputImage image = InputImage.fromMediaImage(mediaImage, rotation);
             detector.process(image)
-                    .addOnSuccessListener(new OnSuccessListener<Pose>() {
-                        @Override
-                        public void onSuccess(Pose pose) {
-                            procesarPose(pose);
-                        }
+                    .addOnSuccessListener(pose -> {
+                        listener.onPoseDetectada(pose, width, height);
+                        procesarPose(pose);
                     })
                     .addOnCompleteListener(task -> imageProxy.close());
         }

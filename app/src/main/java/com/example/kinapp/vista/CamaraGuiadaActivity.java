@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +25,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.kinapp.R;
 import com.example.kinapp.controlador.SentadillaAnalizador;
 import com.google.common.util.concurrent.ListenableFuture;
+import com.google.mlkit.vision.pose.Pose;
 
 import java.util.Locale;
 import java.util.concurrent.ExecutionException;
@@ -36,6 +36,7 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
 
     private static final int REQUEST_CODE_PERMISSIONS = 10;
     private PreviewView vistaCamara;
+    private PoseOverlayView vistaEsqueleto;
     private TextView txtFeedback;
     private TextView txtContador;
     private ImageView btnCerrar;
@@ -57,6 +58,7 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
         });
 
         vistaCamara = findViewById(R.id.vista_camara_fondo);
+        vistaEsqueleto = findViewById(R.id.vista_esqueleto);
         txtFeedback = findViewById(R.id.txt_feedback_ia);
         txtContador = findViewById(R.id.txt_contador_reps);
         btnCerrar = findViewById(R.id.btn_cerrar_camara);
@@ -133,6 +135,11 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
                 tts.speak(mensaje, TextToSpeech.QUEUE_FLUSH, null, null);
             }
         });
+    }
+
+    @Override
+    public void onPoseDetectada(Pose pose, int imageWidth, int imageHeight) {
+        runOnUiThread(() -> vistaEsqueleto.setPose(pose, imageWidth, imageHeight));
     }
 
     private boolean allPermissionsGranted() {
