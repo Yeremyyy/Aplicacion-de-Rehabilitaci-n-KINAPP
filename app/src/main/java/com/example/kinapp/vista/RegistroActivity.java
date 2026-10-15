@@ -95,7 +95,7 @@ public class RegistroActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (UsuarioController.registrarUsuario(correo, pass, nombre)) {
+                if (UsuarioController.registrarUsuario(RegistroActivity.this, correo, pass, nombre)) {
                     Toast.makeText(RegistroActivity.this, "Cuenta creada con éxito", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {

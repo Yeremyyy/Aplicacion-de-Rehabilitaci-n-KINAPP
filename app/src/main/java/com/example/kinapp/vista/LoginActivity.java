@@ -11,7 +11,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.kinapp.R;
 import com.example.kinapp.controlador.UsuarioController;
-import com.example.kinapp.modelo.Usuario;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -28,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
         String correoGuardado = prefs.getString("correo_usuario", null);
 
         if (correoGuardado != null) {
-            UsuarioController.restaurarSesion(correoGuardado);
+            UsuarioController.restaurarSesion(LoginActivity.this, correoGuardado);
             Intent intent = new Intent(LoginActivity.this, PanelActivity.class);
             startActivity(intent);
             finish();
@@ -61,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (UsuarioController.validarLogin(correo, pass)) {
+                if (UsuarioController.validarLogin(LoginActivity.this, correo, pass)) {
                     SharedPreferences prefs = getSharedPreferences("SesionKinApp", MODE_PRIVATE);
                     SharedPreferences.Editor editor = prefs.edit();
                     editor.putString("correo_usuario", correo);
