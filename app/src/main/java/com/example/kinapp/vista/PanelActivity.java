@@ -50,7 +50,7 @@ public class PanelActivity extends AppCompatActivity {
         btnCamara.setOnClickListener(v -> mostrarToastEnDesarrollo());
 
         btnComenzarTerapia.setOnClickListener(v -> {
-            mostrarToastEnDesarrollo();
+            startActivity(new Intent(PanelActivity.this, CalibracionSensorActivity.class));
         });
 
         btnProgreso.setOnClickListener(v -> {
