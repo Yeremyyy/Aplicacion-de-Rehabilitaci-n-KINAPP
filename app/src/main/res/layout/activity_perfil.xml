@@ -91,10 +91,14 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/btn_editar_telefono"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="horizontal"
-                        android:padding="16dp">
+                        android:padding="16dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
 
                         <TextView
                             android:layout_width="0dp"
@@ -145,11 +149,15 @@
                 app:cardElevation="2dp">
 
                 <LinearLayout
+                    android:id="@+id/btn_especialista"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center_vertical"
                     android:orientation="horizontal"
-                    android:padding="16dp">
+                    android:padding="16dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="40dp"
@@ -204,11 +212,15 @@
                     android:orientation="vertical">
 
                     <LinearLayout
+                        android:id="@+id/btn_notificaciones_rutina"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:padding="16dp">
+                        android:padding="16dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
 
                         <ImageView
                             android:layout_width="24dp"
@@ -230,11 +242,15 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/btn_privacidad"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:padding="16dp">
+                        android:padding="16dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
 
                         <ImageView
                             android:layout_width="24dp"
@@ -255,11 +271,15 @@
                     </LinearLayout>
 
                     <LinearLayout
+                        android:id="@+id/btn_cambiar_pass"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:gravity="center_vertical"
                         android:orientation="horizontal"
-                        android:padding="16dp">
+                        android:padding="16dp"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
 
                         <ImageView
                             android:layout_width="24dp"
