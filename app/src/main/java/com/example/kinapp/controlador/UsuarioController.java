@@ -60,7 +60,7 @@ public class UsuarioController {
         return isValid;
     }
 
-    public static void restaurarSesion(Context context, String correo) {
+    public static boolean restaurarSesion(Context context, String correo) {
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getReadableDatabase();
 
@@ -76,6 +76,7 @@ public class UsuarioController {
         String[] selectionArgs = {correo};
 
         Cursor cursor = db.query(UsuarioEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
+        boolean exito = false;
 
         if (cursor.moveToFirst()) {
             String nombre = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
@@ -83,10 +84,12 @@ public class UsuarioController {
             String fecha = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_FECHA));
             String tel = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_TELEFONO));
             usuarioActual = new Usuario(correo, contrasena, nombre, fecha, tel);
+            exito = true;
         }
 
         cursor.close();
         db.close();
+        return exito;
     }
 
     public static boolean actualizarTelefono(Context context, String nuevoTelefono) {
