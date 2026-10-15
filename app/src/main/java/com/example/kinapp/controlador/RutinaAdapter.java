@@ -4,6 +4,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.example.kinapp.R;
@@ -30,6 +31,13 @@ public class RutinaAdapter extends RecyclerView.Adapter<RutinaAdapter.ViewHolder
         Rutina rutina = listaRutinas.get(position);
         holder.txtTitulo.setText(rutina.getTitulo());
         holder.txtDesc.setText(rutina.getDescripcion());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(v.getContext(), "Funcionalidad en desarrollo", Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
