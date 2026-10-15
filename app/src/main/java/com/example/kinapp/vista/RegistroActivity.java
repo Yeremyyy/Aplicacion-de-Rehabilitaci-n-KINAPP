@@ -1,5 +1,6 @@
 package com.example.kinapp.vista;
 
+import android.app.DatePickerDialog;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -14,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.kinapp.R;
 import com.example.kinapp.controlador.UsuarioController;
+
+import java.util.Calendar;
 
 public class RegistroActivity extends AppCompatActivity {
 
@@ -72,6 +75,24 @@ public class RegistroActivity extends AppCompatActivity {
             }
         });
 
+        etFechaNac.setFocusable(false);
+        etFechaNac.setClickable(true);
+        etFechaNac.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Calendar calc = Calendar.getInstance();
+                int year = calc.get(Calendar.YEAR);
+                int month = calc.get(Calendar.MONTH);
+                int day = calc.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog dialog = new DatePickerDialog(RegistroActivity.this, (view, y, m, d) -> {
+                    String date = d + "/" + (m + 1) + "/" + y;
+                    etFechaNac.setText(date);
+                }, year, month, day);
+                dialog.show();
+            }
+        });
+
         btnRegistrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -79,8 +100,9 @@ public class RegistroActivity extends AppCompatActivity {
                 String correo = etCorreo.getText().toString().trim();
                 String pass = etPass.getText().toString().trim();
                 String passConf = etPassConfirmar.getText().toString().trim();
+                String fecha = etFechaNac.getText().toString().trim();
 
-                if (nombre.isEmpty() || correo.isEmpty() || pass.isEmpty() || passConf.isEmpty()) {
+                if (nombre.isEmpty() || correo.isEmpty() || pass.isEmpty() || passConf.isEmpty() || fecha.isEmpty()) {
                     Toast.makeText(RegistroActivity.this, "Llena los campos obligatorios", Toast.LENGTH_SHORT).show();
                     return;
                 }
@@ -95,7 +117,7 @@ public class RegistroActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (UsuarioController.registrarUsuario(RegistroActivity.this, correo, pass, nombre)) {
+                if (UsuarioController.registrarUsuario(RegistroActivity.this, correo, pass, nombre, fecha)) {
                     Toast.makeText(RegistroActivity.this, "Cuenta creada con éxito", Toast.LENGTH_SHORT).show();
                     finish();
                 } else {
