@@ -124,13 +124,17 @@
                 app:layout_constraintTop_toBottomOf="@id/txt_racha">
 
                 <LinearLayout
+                    android:id="@+id/btn_catalogo_grid"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="20dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="24dp"
@@ -145,13 +149,17 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/btn_progreso_grid"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="20dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="24dp"
@@ -166,13 +174,17 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/btn_camara_grid"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="20dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="24dp"
@@ -187,13 +199,17 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/btn_mensajes_grid"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_rowWeight="1"
                     android:layout_columnWeight="1"
                     android:layout_margin="8dp"
                     android:orientation="vertical"
-                    android:padding="20dp">
+                    android:padding="20dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground">
 
                     <ImageView
                         android:layout_width="24dp"
