@@ -27,11 +27,16 @@ public class LoginActivity extends AppCompatActivity {
         String correoGuardado = prefs.getString("correo_usuario", null);
 
         if (correoGuardado != null) {
-            UsuarioController.restaurarSesion(LoginActivity.this, correoGuardado);
-            Intent intent = new Intent(LoginActivity.this, PanelActivity.class);
-            startActivity(intent);
-            finish();
-            return;
+            if (UsuarioController.restaurarSesion(LoginActivity.this, correoGuardado)) {
+                Intent intent = new Intent(LoginActivity.this, PanelActivity.class);
+                startActivity(intent);
+                finish();
+                return;
+            } else {
+                SharedPreferences.Editor editor = prefs.edit();
+                editor.clear();
+                editor.apply();
+            }
         }
 
         setContentView(R.layout.activity_login);

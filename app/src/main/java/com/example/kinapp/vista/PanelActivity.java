@@ -19,6 +19,8 @@ public class PanelActivity extends AppCompatActivity {
 
     private BottomNavigationView bottomNav;
     private TextView txtNombreUsuario;
+    private TextView txtTituloRutina;
+    private TextView txtInfoRutina;
     private ImageView btnNotificaciones;
     private Button btnComenzarTerapia;
     private LinearLayout btnCatalogo;
@@ -32,12 +34,17 @@ public class PanelActivity extends AppCompatActivity {
         setContentView(R.layout.activity_panel);
 
         txtNombreUsuario = findViewById(R.id.txt_nombreUsuario);
+        txtTituloRutina = findViewById(R.id.txt_tituloRutina);
+        txtInfoRutina = findViewById(R.id.txt_infoRutina);
         btnNotificaciones = findViewById(R.id.btn_notificaciones);
         btnComenzarTerapia = findViewById(R.id.btn_comenzarTerapia);
         btnCatalogo = findViewById(R.id.btn_catalogo_grid);
         btnProgreso = findViewById(R.id.btn_progreso_grid);
         btnCamara = findViewById(R.id.btn_camara_grid);
         btnMensajes = findViewById(R.id.btn_mensajes_grid);
+
+        txtTituloRutina.setText("Sentadillas");
+        txtInfoRutina.setText("Cámara guiada · 12 reps");
 
         Usuario u = UsuarioController.getUsuarioActual();
         if (u != null) {
@@ -47,7 +54,10 @@ public class PanelActivity extends AppCompatActivity {
         btnNotificaciones.setOnClickListener(v -> mostrarToastEnDesarrollo());
         btnCatalogo.setOnClickListener(v -> mostrarToastEnDesarrollo());
         btnMensajes.setOnClickListener(v -> mostrarToastEnDesarrollo());
-        btnCamara.setOnClickListener(v -> mostrarToastEnDesarrollo());
+
+        btnCamara.setOnClickListener(v -> {
+            startActivity(new Intent(PanelActivity.this, CalibracionSensorActivity.class));
+        });
 
         btnComenzarTerapia.setOnClickListener(v -> {
             startActivity(new Intent(PanelActivity.this, CalibracionSensorActivity.class));
