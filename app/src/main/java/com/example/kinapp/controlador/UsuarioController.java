@@ -12,7 +12,7 @@ public class UsuarioController {
 
     private static Usuario usuarioActual = null;
 
-    public static boolean registrarUsuario(Context context, String correo, String contrasena, String nombre, String fechaNac) {
+    public static boolean registrarUsuario(Context context, String correo, String contrasena, String nombre, String fechaNac, String ubicacion) {
         DatabaseHelper dbHelper = new DatabaseHelper(context);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -22,6 +22,7 @@ public class UsuarioController {
         values.put(UsuarioEntry.COLUMN_NOMBRE, nombre);
         values.put(UsuarioEntry.COLUMN_FECHA, fechaNac);
         values.put(UsuarioEntry.COLUMN_TELEFONO, "");
+        values.put(UsuarioEntry.COLUMN_UBICACION, ubicacion);
 
         long newRowId = db.insert(UsuarioEntry.TABLE_NAME, null, values);
         db.close();
