@@ -52,7 +52,7 @@ public class ResumenRutinaActivity extends AppCompatActivity {
         btnCerrar.setOnClickListener(v -> finish());
 
         btnFinalizarGuardar.setOnClickListener(v -> {
-            boolean guardado = ProgresoController.guardarRutinaCompletada(this, "Sentadillas con IA");
+            boolean guardado = ProgresoController.guardarRutinaCompletada(this, "Sentadillas");
             if (guardado) {
                 Toast.makeText(this, "Progreso guardado correctamente", Toast.LENGTH_SHORT).show();
                 Intent intent = new Intent(ResumenRutinaActivity.this, ProgresoActivity.class);
