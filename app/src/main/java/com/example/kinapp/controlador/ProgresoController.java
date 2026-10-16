@@ -59,4 +59,39 @@ public class ProgresoController {
         db.close();
         return racha;
     }
+    public static int obtenerSesionesTotales(Context context) {
+        Usuario u = UsuarioController.getUsuarioActual();
+        if (u == null) return 0;
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM historial_rutinas WHERE correo = ?", new String[]{u.getCorreo()});
+        int total = 0;
+        if (cursor.moveToFirst()) total = cursor.getInt(0);
+        cursor.close();
+        db.close();
+        return total;
+    }
+
+    public static int obtenerProgresoSentadillas(Context context) {
+        Usuario u = UsuarioController.getUsuarioActual();
+        if (u == null) return 0;
+        DatabaseHelper dbHelper = new DatabaseHelper(context);
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM historial_rutinas WHERE correo = ? AND tipo = 'Sentadillas'", new String[]{u.getCorreo()});
+        int sentadillas = 0;
+        if (cursor.moveToFirst()) sentadillas = cursor.getInt(0);
+        cursor.close();
+        db.close();
+        return sentadillas;
+    }
+
+    public static int obtenerPorcentajeAdherenciaMensual(Context context) {
+        int diasConectados = obtenerDiasDeRacha(context);
+        if (diasConectados == 0) return 0;
+
+        java.util.Calendar cal = java.util.Calendar.getInstance();
+        int diasEnElMes = cal.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
+
+        return (int) (((float) diasConectados / diasEnElMes) * 100);
+    }
 }

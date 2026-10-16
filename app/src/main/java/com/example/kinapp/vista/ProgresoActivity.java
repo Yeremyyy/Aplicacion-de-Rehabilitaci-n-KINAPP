@@ -8,8 +8,13 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.kinapp.controlador.ProgresoController;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.kinapp.R;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class ProgresoActivity extends AppCompatActivity {
 
@@ -40,7 +45,7 @@ public class ProgresoActivity extends AppCompatActivity {
         pbRodilla = findViewById(R.id.pb_rodilla);
         bottomNav = findViewById(R.id.barra_navegacion_progreso);
 
-        cargarDatosSimulados();
+        cargarDatosReales();
 
         btnVolver.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,14 +83,26 @@ public class ProgresoActivity extends AppCompatActivity {
         });
     }
 
-    private void cargarDatosSimulados() {
-        txtAdherencia.setText("0%");
-        txtRacha.setText("0");
-        txtSesiones.setText("0");
-        txtMesActual.setText("Mes actual");
+    private void cargarDatosReales() {
+        int sesionesTotales = ProgresoController.obtenerSesionesTotales(this);
+        int diasRacha = ProgresoController.obtenerDiasDeRacha(this);
+        int adherencia = ProgresoController.obtenerPorcentajeAdherenciaMensual(this);
+
+        txtSesiones.setText(String.valueOf(sesionesTotales));
+        txtRacha.setText(String.valueOf(diasRacha));
+        txtAdherencia.setText(adherencia + "%");
+
+        String nombreMes = new SimpleDateFormat("MMMM yyyy", new Locale("es", "ES")).format(new Date());
+        String mesCapitalizado = nombreMes.substring(0, 1).toUpperCase() + nombreMes.substring(1);
+        txtMesActual.setText(mesCapitalizado);
+
+        int sentadillasRestantes = ProgresoController.obtenerProgresoSentadillas(this);
+        txtProgresoRodilla.setText(sentadillasRestantes + "/20");
+        pbRodilla.setMax(20);
+        pbRodilla.setProgress(sentadillasRestantes);
+
         txtProgresoHombro.setText("0/15");
+        pbHombro.setMax(15);
         pbHombro.setProgress(0);
-        txtProgresoRodilla.setText("0/20");
-        pbRodilla.setProgress(0);
     }
 }
