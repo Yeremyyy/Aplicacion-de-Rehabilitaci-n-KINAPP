@@ -135,7 +135,7 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
             }
         }, 500);
 
-        new CountDownTimer(8000, 1000) {
+        new CountDownTimer(10000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long segundos = millisUntilFinished / 1000;
