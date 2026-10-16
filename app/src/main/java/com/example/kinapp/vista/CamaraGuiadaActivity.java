@@ -127,20 +127,26 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
     }
 
     private void iniciarCuentaRegresiva() {
-        txtFeedback.setText("Ponte de lado. Iniciando en 5...");
+        txtFeedback.setText("Ponte de lado frente a la cámara...");
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (sonidoActivado && tts != null) {
-                tts.speak("Ponte de lado. Prepárate.", TextToSpeech.QUEUE_FLUSH, null, null);
+                tts.speak("Ponte de lado frente a la cámara.", TextToSpeech.QUEUE_FLUSH, null, null);
             }
-        }, 1000);
+        }, 500);
 
-        new CountDownTimer(5000, 1000) {
+        new CountDownTimer(8000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long segundos = millisUntilFinished / 1000;
-                if (segundos > 0 && segundos <= 3) {
-                    txtFeedback.setText("Prepárate... " + segundos);
+
+                if (segundos == 5) {
+                    txtFeedback.setText("Prepárate...");
+                    if (sonidoActivado && tts != null) {
+                        tts.speak("Prepárate.", TextToSpeech.QUEUE_FLUSH, null, null);
+                    }
+                } else if (segundos > 0 && segundos <= 3) {
+                    txtFeedback.setText("Comenzamos en... " + segundos);
                     if (sonidoActivado && tts != null) {
                         tts.speak(String.valueOf(segundos), TextToSpeech.QUEUE_FLUSH, null, null);
                     }
