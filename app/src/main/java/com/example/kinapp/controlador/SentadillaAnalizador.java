@@ -56,27 +56,33 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
     }
 
     private void procesarPose(Pose pose) {
+        if (repeticiones >= 12) return;
+
         PoseLandmark cadera = pose.getPoseLandmark(PoseLandmark.LEFT_HIP);
         PoseLandmark rodilla = pose.getPoseLandmark(PoseLandmark.LEFT_KNEE);
         PoseLandmark tobillo = pose.getPoseLandmark(PoseLandmark.LEFT_ANKLE);
 
-        if (cadera == null || rodilla == null || tobillo == null) {
+        if (cadera == null || rodilla == null || tobillo == null) return;
+
+        if (cadera.getInFrameLikelihood() < 0.6f ||
+                rodilla.getInFrameLikelihood() < 0.6f ||
+                tobillo.getInFrameLikelihood() < 0.6f) {
             return;
         }
 
         double angulo = calcularAngulo(cadera, rodilla, tobillo);
         long tiempoActual = System.currentTimeMillis();
 
-        if (angulo > 160) {
+        if (angulo > 150) {
             if (enPosicionBaja) {
                 repeticiones++;
                 listener.onRepeticion(repeticiones);
                 listener.onFeedback("¡Excelente!", false);
                 enPosicionBaja = false;
             }
-        } else if (angulo < 90) {
+        } else if (angulo < 110) {
             enPosicionBaja = true;
-        } else if (angulo > 100 && angulo < 130 && !enPosicionBaja) {
+        } else if (angulo > 110 && angulo < 140 && !enPosicionBaja) {
             if (tiempoActual - ultimoFeedback > 3000) {
                 listener.onFeedback("Baja un poco más la cadera", true);
                 ultimoFeedback = tiempoActual;
