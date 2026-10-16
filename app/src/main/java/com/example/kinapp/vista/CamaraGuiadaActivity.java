@@ -1,8 +1,11 @@
 package com.example.kinapp.vista;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.speech.tts.TextToSpeech;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -44,6 +47,7 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
     private ExecutorService cameraExecutor;
     private TextToSpeech tts;
     private boolean sonidoActivado = true;
+    private ProcessCameraProvider cameraProviderGlobal;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +100,7 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
 
         cameraProviderFuture.addListener(() -> {
             try {
-                ProcessCameraProvider cameraProvider = cameraProviderFuture.get();
+                cameraProviderGlobal = cameraProviderFuture.get();
 
                 Preview preview = new Preview.Builder().build();
                 preview.setSurfaceProvider(vistaCamara.getSurfaceProvider());
@@ -108,8 +112,8 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
                 imageAnalysis.setAnalyzer(cameraExecutor, new SentadillaAnalizador(this));
 
                 CameraSelector cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
-                cameraProvider.unbindAll();
-                cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis);
+                cameraProviderGlobal.unbindAll();
+                cameraProviderGlobal.bindToLifecycle(this, cameraSelector, preview, imageAnalysis);
 
             } catch (ExecutionException | InterruptedException e) {
                 Toast.makeText(this, "Error al iniciar cámara", Toast.LENGTH_SHORT).show();
@@ -121,8 +125,21 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
     public void onRepeticion(int reps) {
         runOnUiThread(() -> {
             txtContador.setText(reps + " / 12");
-            if (sonidoActivado) {
-                tts.speak(String.valueOf(reps), TextToSpeech.QUEUE_FLUSH, null, null);
+
+            if (reps < 12) {
+                if (sonidoActivado) tts.speak(String.valueOf(reps), TextToSpeech.QUEUE_FLUSH, null, null);
+            } else {
+                if (sonidoActivado) tts.speak("¡Rutina completada! Excelente trabajo.", TextToSpeech.QUEUE_FLUSH, null, null);
+                if (cameraProviderGlobal != null) {
+                    cameraProviderGlobal.unbindAll();
+                }
+                txtFeedback.setText("¡Rutina Completada!");
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    Intent intent = new Intent(CamaraGuiadaActivity.this, ResumenRutinaActivity.class);
+                    startActivity(intent);
+                    finish();
+                }, 2500);
             }
         });
     }
@@ -139,7 +156,7 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
 
     @Override
     public void onPoseDetectada(Pose pose, int imageWidth, int imageHeight) {
-        runOnUiThread(() -> vistaEsqueleto.setPose(pose, imageWidth, imageHeight));
+        runOnUiThread(() -> vistaEsqueleto.setPose(pose, imageWidth, imageHeight, true));
     }
 
     private boolean allPermissionsGranted() {
