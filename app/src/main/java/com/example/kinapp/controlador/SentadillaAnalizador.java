@@ -21,6 +21,8 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
     private boolean enPosicionBaja = false;
     private int repeticiones = 0;
     private long ultimoFeedback = 0;
+    private long tiempoEnZonaMedia = 0;
+    private boolean rutinaIniciada = false;
 
     public interface SentadillaListener {
         void onRepeticion(int reps);
@@ -34,6 +36,10 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
                 .setDetectorMode(AccuratePoseDetectorOptions.STREAM_MODE)
                 .build();
         detector = PoseDetection.getClient(options);
+    }
+
+    public void iniciarRutina() {
+        this.rutinaIniciada = true;
     }
 
     @SuppressLint("UnsafeOptInUsageError")
@@ -56,7 +62,7 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
     }
 
     private void procesarPose(Pose pose) {
-        if (repeticiones >= 12) return;
+        if (!rutinaIniciada || repeticiones >= 12) return;
 
         PoseLandmark cadera = pose.getPoseLandmark(PoseLandmark.LEFT_HIP);
         PoseLandmark rodilla = pose.getPoseLandmark(PoseLandmark.LEFT_KNEE);
@@ -74,6 +80,7 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
         long tiempoActual = System.currentTimeMillis();
 
         if (angulo > 150) {
+            tiempoEnZonaMedia = 0;
             if (enPosicionBaja) {
                 repeticiones++;
                 listener.onRepeticion(repeticiones);
@@ -81,11 +88,16 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
                 enPosicionBaja = false;
             }
         } else if (angulo < 110) {
+            tiempoEnZonaMedia = 0;
             enPosicionBaja = true;
-        } else if (angulo > 110 && angulo < 140 && !enPosicionBaja) {
-            if (tiempoActual - ultimoFeedback > 3000) {
-                listener.onFeedback("Baja un poco más la cadera", true);
-                ultimoFeedback = tiempoActual;
+        } else if (angulo >= 110 && angulo <= 140 && !enPosicionBaja) {
+            if (tiempoEnZonaMedia == 0) {
+                tiempoEnZonaMedia = tiempoActual;
+            } else if (tiempoActual - tiempoEnZonaMedia > 1500) {
+                if (tiempoActual - ultimoFeedback > 4000) {
+                    listener.onFeedback("Baja un poco más la cadera", true);
+                    ultimoFeedback = tiempoActual;
+                }
             }
         }
     }
