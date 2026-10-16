@@ -16,6 +16,7 @@ public class PoseOverlayView extends View {
     private Paint paintLinea;
     private int imageWidth;
     private int imageHeight;
+    private boolean isFrontCamera = true;
 
     public PoseOverlayView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -28,11 +29,21 @@ public class PoseOverlayView extends View {
         paintLinea.setStrokeWidth(10f);
     }
 
-    public void setPose(Pose pose, int imageWidth, int imageHeight) {
+    public void setPose(Pose pose, int imageWidth, int imageHeight, boolean isFrontCamera) {
         this.pose = pose;
         this.imageWidth = imageWidth;
         this.imageHeight = imageHeight;
+        this.isFrontCamera = isFrontCamera;
         invalidate();
+    }
+
+    private float translateX(float x, float scale, float offsetX) {
+        float scaledX = x * scale + offsetX;
+        return isFrontCamera ? getWidth() - scaledX : scaledX;
+    }
+
+    private float translateY(float y, float scale, float offsetY) {
+        return y * scale + offsetY;
     }
 
     @Override
@@ -52,15 +63,17 @@ public class PoseOverlayView extends View {
         PoseLandmark rodilla = pose.getPoseLandmark(PoseLandmark.LEFT_KNEE);
         PoseLandmark tobillo = pose.getPoseLandmark(PoseLandmark.LEFT_ANKLE);
 
-        if (hombro != null && cadera != null && rodilla != null && tobillo != null) {
-            float hX = hombro.getPosition().x * scale + offsetX;
-            float hY = hombro.getPosition().y * scale + offsetY;
-            float cX = cadera.getPosition().x * scale + offsetX;
-            float cY = cadera.getPosition().y * scale + offsetY;
-            float rX = rodilla.getPosition().x * scale + offsetX;
-            float rY = rodilla.getPosition().y * scale + offsetY;
-            float tX = tobillo.getPosition().x * scale + offsetX;
-            float tY = tobillo.getPosition().y * scale + offsetY;
+        if (hombro != null && cadera != null && rodilla != null && tobillo != null &&
+                cadera.getInFrameLikelihood() > 0.5f) {
+
+            float hX = translateX(hombro.getPosition().x, scale, offsetX);
+            float hY = translateY(hombro.getPosition().y, scale, offsetY);
+            float cX = translateX(cadera.getPosition().x, scale, offsetX);
+            float cY = translateY(cadera.getPosition().y, scale, offsetY);
+            float rX = translateX(rodilla.getPosition().x, scale, offsetX);
+            float rY = translateY(rodilla.getPosition().y, scale, offsetY);
+            float tX = translateX(tobillo.getPosition().x, scale, offsetX);
+            float tY = translateY(tobillo.getPosition().y, scale, offsetY);
 
             canvas.drawLine(hX, hY, cX, cY, paintLinea);
             canvas.drawLine(cX, cY, rX, rY, paintLinea);
