@@ -13,5 +13,6 @@ public final class UsuarioContract {
         public static final String COLUMN_NOMBRE = "nombre";
         public static final String COLUMN_FECHA = "fechaNac";
         public static final String COLUMN_TELEFONO = "telefono";
+        public static final String COLUMN_UBICACION = "ubicacion";
     }
 }

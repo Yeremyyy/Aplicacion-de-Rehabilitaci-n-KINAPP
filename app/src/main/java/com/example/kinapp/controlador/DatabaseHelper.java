@@ -8,7 +8,7 @@ import com.example.kinapp.modelo.UsuarioContract.UsuarioEntry;
 
 public class DatabaseHelper extends SQLiteOpenHelper {
 
-    public static final int DATABASE_VERSION = 2;
+    public static final int DATABASE_VERSION = 3;
     public static final String DATABASE_NAME = "KinApp.db";
 
     private static final String SQL_CREATE_ENTRIES =
@@ -18,7 +18,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                     UsuarioEntry.COLUMN_CONTRASENA + " TEXT," +
                     UsuarioEntry.COLUMN_NOMBRE + " TEXT," +
                     UsuarioEntry.COLUMN_FECHA + " TEXT," +
-                    UsuarioEntry.COLUMN_TELEFONO + " TEXT)";
+                    UsuarioEntry.COLUMN_TELEFONO + " TEXT," +
+                    UsuarioEntry.COLUMN_UBICACION + " TEXT)";
 
     private static final String SQL_DELETE_ENTRIES =
             "DROP TABLE IF EXISTS " + UsuarioEntry.TABLE_NAME;
