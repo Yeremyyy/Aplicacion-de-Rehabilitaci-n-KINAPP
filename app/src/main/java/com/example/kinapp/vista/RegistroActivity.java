@@ -34,6 +34,10 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+/**
+ * Actividad encargada del registro de nuevos usuarios y especialistas en el sistema.
+ * Gestiona validaciones de formulario, geolocalización por hardware y persistencia asíncrona.
+ */
 public class RegistroActivity extends AppCompatActivity {
 
     private static final int REQUEST_LOCATION_PERMISSION = 100;
@@ -56,6 +60,13 @@ public class RegistroActivity extends AppCompatActivity {
     private TextView txtUbicacionDetectada;
     private String ubicacionFinal = "No especificada";
 
+    /**
+     * Inicializa los componentes de la interfaz de registro, calendarios,
+     * gestión de ubicación y lógica de validación de campos.
+     *
+     * @param savedInstanceState Estado guardado previo de la actividad.
+     * @throws android.view.InflateException Si falla la carga del layout XML.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -146,16 +157,21 @@ public class RegistroActivity extends AppCompatActivity {
                     return;
                 }
 
-                if (UsuarioController.registrarUsuario(RegistroActivity.this, correo, pass, nombre, fecha, ubicacionFinal)) {
-                    Toast.makeText(RegistroActivity.this, "Cuenta creada con éxito en " + ubicacionFinal, Toast.LENGTH_SHORT).show();
-                    finish();
-                } else {
-                    Toast.makeText(RegistroActivity.this, "El correo ya está registrado", Toast.LENGTH_LONG).show();
-                }
+                UsuarioController.registrarUsuario(RegistroActivity.this, correo, pass, nombre, fecha, ubicacionFinal, exito -> {
+                    if (exito) {
+                        Toast.makeText(RegistroActivity.this, "Cuenta creada con éxito en " + ubicacionFinal, Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(RegistroActivity.this, "El correo ya está registrado", Toast.LENGTH_LONG).show();
+                    }
+                });
             }
         });
     }
 
+    /**
+     * Solicita los permisos necesarios de hardware para acceder a la ubicación GPS.
+     */
     private void solicitarUbicacion() {
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION_PERMISSION);
@@ -164,6 +180,9 @@ public class RegistroActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Obtiene la última posición conocida utilizando GPS o red móvil.
+     */
     @SuppressLint("MissingPermission")
     private void obtenerCoordenadas() {
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -183,6 +202,12 @@ public class RegistroActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Traduce las coordenadas geográficas a una dirección legible mediante Geocoder.
+     *
+     * @param lat Latitud geográfica.
+     * @param lon Longitud geográfica.
+     */
     private void traducirCoordenadas(double lat, double lon) {
         Geocoder geocoder = new Geocoder(this, Locale.getDefault());
         try {
@@ -199,6 +224,9 @@ public class RegistroActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Gestiona la respuesta del usuario ante la solicitud de permisos en tiempo de ejecución.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
