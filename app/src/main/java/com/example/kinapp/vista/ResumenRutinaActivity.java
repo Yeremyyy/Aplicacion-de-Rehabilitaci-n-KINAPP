@@ -16,6 +16,10 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.kinapp.R;
 import com.example.kinapp.controlador.ProgresoController;
 
+/**
+ * Actividad encargada de mostrar el resumen analítico y métricas de la rutina finalizada.
+ * Permite confirmar y persistir los resultados en la base de datos de forma asíncrona.
+ */
 public class ResumenRutinaActivity extends AppCompatActivity {
 
     private ImageView btnCerrar;
@@ -25,6 +29,13 @@ public class ResumenRutinaActivity extends AppCompatActivity {
     private TextView txtPrecision;
     private TextView txtReporte;
 
+    /**
+     * Inicializa los componentes visuales, aplica insets de sistema y configura
+     * los eventos de interacción para cerrar o guardar la rutina completada.
+     *
+     * @param savedInstanceState Estado guardado previo de la actividad.
+     * @throws android.view.InflateException Si falla la carga del layout XML.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,16 +63,17 @@ public class ResumenRutinaActivity extends AppCompatActivity {
         btnCerrar.setOnClickListener(v -> finish());
 
         btnFinalizarGuardar.setOnClickListener(v -> {
-            boolean guardado = ProgresoController.guardarRutinaCompletada(this, "Sentadillas");
-            if (guardado) {
-                Toast.makeText(this, "Progreso guardado correctamente", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(ResumenRutinaActivity.this, ProgresoActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(this, "Error al guardar el progreso", Toast.LENGTH_SHORT).show();
-            }
+            ProgresoController.guardarRutinaCompletada(this, "Sentadillas", guardado -> {
+                if (guardado) {
+                    Toast.makeText(ResumenRutinaActivity.this, "Progreso guardado correctamente", Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(ResumenRutinaActivity.this, ProgresoActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    Toast.makeText(ResumenRutinaActivity.this, "Error al guardar el progreso", Toast.LENGTH_SHORT).show();
+                }
+            });
         });
     }
 }
