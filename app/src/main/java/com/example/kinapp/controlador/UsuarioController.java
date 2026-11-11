@@ -84,10 +84,9 @@ public class UsuarioController {
             String[] selectionArgs = {correo, contrasena};
 
             Cursor cursor = db.query(UsuarioEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
-            boolean isValid = false;
 
-            if (cursor.moveToFirst()) {
-                isValid = true;
+            boolean isValid = cursor.moveToFirst();
+            if (isValid) {
                 String nombre = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
                 String fecha = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_FECHA));
                 String tel = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_TELEFONO));
@@ -126,15 +125,14 @@ public class UsuarioController {
             String[] selectionArgs = {correo};
 
             Cursor cursor = db.query(UsuarioEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
-            boolean exito = false;
 
-            if (cursor.moveToFirst()) {
+            boolean exito = cursor.moveToFirst();
+            if (exito) {
                 String nombre = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
                 String contrasena = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_CONTRASENA));
                 String fecha = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_FECHA));
                 String tel = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_TELEFONO));
                 usuarioActual = new Usuario(correo, contrasena, nombre, fecha, tel);
-                exito = true;
             }
 
             cursor.close();
@@ -151,7 +149,6 @@ public class UsuarioController {
      * @param context       Contexto de la vista que solicita la modificación.
      * @param nuevoTelefono El nuevo número de contacto a guardar.
      * @param callback      Callback para retornar el resultado de la actualización.
-     * @return boolean      false de forma inmediata si la sesión es nula, o procesa de forma asíncrona si hay sesión.
      */
     public static void actualizarTelefono(Context context, String nuevoTelefono, OnResultCallback callback) {
         if (usuarioActual == null) {
