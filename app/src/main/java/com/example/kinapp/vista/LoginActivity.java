@@ -8,6 +8,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+import android.view.WindowManager;
 
 import com.example.kinapp.R;
 import com.example.kinapp.controlador.UsuarioController;
@@ -33,6 +34,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
         SharedPreferences prefs = getSharedPreferences("SesionKinApp", MODE_PRIVATE);
         String correoGuardado = prefs.getString("correo_usuario", null);
