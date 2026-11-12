@@ -210,7 +210,7 @@ public class ProgresoController {
             java.util.Calendar cal = java.util.Calendar.getInstance();
             int diasEnElMes = cal.getActualMaximum(java.util.Calendar.DAY_OF_MONTH);
 
-            int porcentaje = (int) (((float) diasConectados / diasEnElMes) * 100);
+            int porcentaje = Math.min(100, (int) (((float) diasConectados / diasEnElMes) * 100));
             callback.onResult(porcentaje);
         });
     }
