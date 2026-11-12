@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,6 +19,10 @@ import com.example.kinapp.R;
 import com.example.kinapp.controlador.UsuarioController;
 import com.example.kinapp.modelo.Usuario;
 
+/**
+ * Actividad encargada de gestionar la información de perfil del usuario,
+ * actualización de datos personales, preferencias del sistema y cierre de sesión.
+ */
 public class PerfilActivity extends AppCompatActivity {
 
     private TextView txtNombre;
@@ -30,8 +35,16 @@ public class PerfilActivity extends AppCompatActivity {
     private LinearLayout btnPrivacidad;
     private LinearLayout btnCambiarPass;
     private Button btnCerrarSesion;
+    private Switch switchNotificaciones;
     private BottomNavigationView bottomNav;
 
+    /**
+     * Inicializa los componentes de la interfaz de usuario del perfil, recupera los datos
+     * almacenados y configura los escuchadores de eventos para preferencias y edición.
+     *
+     * @param savedInstanceState Estado guardado previo de la actividad.
+     * @throws android.view.InflateException Si ocurre un error al cargar el diseño XML.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,9 +60,28 @@ public class PerfilActivity extends AppCompatActivity {
         btnPrivacidad = findViewById(R.id.btn_privacidad);
         btnCambiarPass = findViewById(R.id.btn_cambiar_pass);
         btnCerrarSesion = findViewById(R.id.btn_cerrar_sesion);
+        switchNotificaciones = findViewById(R.id.switch_notificaciones);
         bottomNav = findViewById(R.id.barra_navegacion_perfil);
 
         cargarDatosPerfil();
+
+        SharedPreferences prefs = getSharedPreferences("KinAppPrefs", MODE_PRIVATE);
+        boolean notifActivas = prefs.getBoolean("notificaciones_activas", true);
+        if (switchNotificaciones != null) {
+            switchNotificaciones.setChecked(notifActivas);
+
+            switchNotificaciones.setOnCheckedChangeListener((buttonView, isChecked) -> {
+                SharedPreferences.Editor editor = getSharedPreferences("KinAppPrefs", MODE_PRIVATE).edit();
+                editor.putBoolean("notificaciones_activas", isChecked);
+                editor.apply();
+
+                if (isChecked) {
+                    Toast.makeText(PerfilActivity.this, "Notificaciones habilitadas", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(PerfilActivity.this, "Notificaciones silenciadas", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
 
         btnEditarTelefono.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -63,9 +95,14 @@ public class PerfilActivity extends AppCompatActivity {
                 builder.setPositiveButton("Guardar", (dialog, which) -> {
                     String nuevoTel = input.getText().toString().trim();
                     if (!nuevoTel.isEmpty()) {
-                        UsuarioController.actualizarTelefono(PerfilActivity.this, nuevoTel);
-                        cargarDatosPerfil();
-                        Toast.makeText(PerfilActivity.this, "Teléfono actualizado", Toast.LENGTH_SHORT).show();
+                        UsuarioController.actualizarTelefono(PerfilActivity.this, nuevoTel, exito -> {
+                            if (exito) {
+                                cargarDatosPerfil();
+                                Toast.makeText(PerfilActivity.this, "Teléfono actualizado", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(PerfilActivity.this, "Error al actualizar teléfono", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 });
                 builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
@@ -85,8 +122,13 @@ public class PerfilActivity extends AppCompatActivity {
                 builder.setPositiveButton("Actualizar", (dialog, which) -> {
                     String nuevaPass = input.getText().toString().trim();
                     if (!nuevaPass.isEmpty()) {
-                        UsuarioController.actualizarContrasena(PerfilActivity.this, nuevaPass);
-                        Toast.makeText(PerfilActivity.this, "Contraseña actualizada exitosamente", Toast.LENGTH_SHORT).show();
+                        UsuarioController.actualizarContrasena(PerfilActivity.this, nuevaPass, exito -> {
+                            if (exito) {
+                                Toast.makeText(PerfilActivity.this, "Contraseña actualizada con éxito", Toast.LENGTH_SHORT).show();
+                            } else {
+                                Toast.makeText(PerfilActivity.this, "Error al actualizar contraseña", Toast.LENGTH_SHORT).show();
+                            }
+                        });
                     }
                 });
                 builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
@@ -94,64 +136,47 @@ public class PerfilActivity extends AppCompatActivity {
             }
         });
 
-        btnEspecialista.setOnClickListener(v -> Toast.makeText(PerfilActivity.this, "Funcionalidad en desarrollo", Toast.LENGTH_SHORT).show());
-        btnNotificacionesRutina.setOnClickListener(v -> Toast.makeText(PerfilActivity.this, "Funcionalidad en desarrollo", Toast.LENGTH_SHORT).show());
-        btnPrivacidad.setOnClickListener(v -> Toast.makeText(PerfilActivity.this, "Funcionalidad en desarrollo", Toast.LENGTH_SHORT).show());
-
-        btnCerrarSesion.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                UsuarioController.cerrarSesion();
-                SharedPreferences prefs = getSharedPreferences("SesionKinApp", MODE_PRIVATE);
-                SharedPreferences.Editor editor = prefs.edit();
-                editor.clear();
-                editor.apply();
-
-                Intent intent = new Intent(PerfilActivity.this, LoginActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                startActivity(intent);
-                finish();
-            }
+        btnCerrarSesion.setOnClickListener(v -> {
+            UsuarioController.cerrarSesion();
+            Intent intent = new Intent(PerfilActivity.this, LoginActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+            startActivity(intent);
+            finish();
         });
 
         bottomNav.setSelectedItemId(R.id.nav_perfil);
-
         bottomNav.setOnItemSelectedListener(item -> {
             int itemId = item.getItemId();
 
-            if (itemId == R.id.nav_perfil) {
-                return true;
-            } else if (itemId == R.id.nav_inicio) {
+            if (itemId == R.id.nav_inicio) {
                 startActivity(new Intent(PerfilActivity.this, PanelActivity.class));
                 overridePendingTransition(0, 0);
-                finish();
                 return true;
             } else if (itemId == R.id.nav_rutinas) {
                 startActivity(new Intent(PerfilActivity.this, RutinasActivity.class));
                 overridePendingTransition(0, 0);
-                finish();
                 return true;
             } else if (itemId == R.id.nav_progreso) {
                 startActivity(new Intent(PerfilActivity.this, ProgresoActivity.class));
                 overridePendingTransition(0, 0);
-                finish();
+                return true;
+            } else if (itemId == R.id.nav_perfil) {
                 return true;
             }
             return false;
         });
     }
 
+    /**
+     * Carga los datos actuales del usuario autenticado y los asigna a los componentes de texto de la vista.
+     */
     private void cargarDatosPerfil() {
         Usuario u = UsuarioController.getUsuarioActual();
         if (u != null) {
             txtNombre.setText(u.getNombre());
             txtCorreo.setText(u.getCorreo());
-            txtFechaValor.setText(u.getFechaNac());
-            if (u.getTelefono() == null || u.getTelefono().isEmpty()) {
-                txtTelefonoValor.setText("Añadir teléfono");
-            } else {
-                txtTelefonoValor.setText(u.getTelefono());
-            }
+            txtTelefonoValor.setText(u.getTelefono() != null && !u.getTelefono().isEmpty() ? u.getTelefono() : "No especificado");
+            txtFechaValor.setText(u.getFechaNac() != null && !u.getFechaNac() .isEmpty() ? u.getFechaNac() : "No especificada");
         }
     }
 }

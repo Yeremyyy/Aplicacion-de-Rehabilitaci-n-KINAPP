@@ -16,6 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Actividad encargada de visualizar las métricas de rendimiento,
+ * racha de días, porcentaje de adherencia y progreso detallado por ejercicio del paciente.
+ */
 public class ProgresoActivity extends AppCompatActivity {
 
     private ImageView btnVolver;
@@ -29,6 +33,13 @@ public class ProgresoActivity extends AppCompatActivity {
     private ProgressBar pbRodilla;
     private BottomNavigationView bottomNav;
 
+    /**
+     * Inicializa los componentes visuales de la vista de progreso, configura la barra de navegación
+     * y dispara la carga asíncrona de las métricas desde la base de datos.
+     *
+     * @param savedInstanceState Estado guardado previo de la actividad.
+     * @throws android.view.InflateException Si ocurre un error al cargar el diseño XML.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,23 +94,32 @@ public class ProgresoActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * Consulta de forma asíncrona los datos de rendimiento desde el controlador
+     * y actualiza los componentes de texto y barras de progreso en la interfaz de usuario.
+     */
     private void cargarDatosReales() {
-        int sesionesTotales = ProgresoController.obtenerSesionesTotales(this);
-        int diasRacha = ProgresoController.obtenerDiasDeRacha(this);
-        int adherencia = ProgresoController.obtenerPorcentajeAdherenciaMensual(this);
-
-        txtSesiones.setText(String.valueOf(sesionesTotales));
-        txtRacha.setText(String.valueOf(diasRacha));
-        txtAdherencia.setText(adherencia + "%");
-
         String nombreMes = new SimpleDateFormat("MMMM yyyy", new Locale("es", "ES")).format(new Date());
         String mesCapitalizado = nombreMes.substring(0, 1).toUpperCase() + nombreMes.substring(1);
         txtMesActual.setText(mesCapitalizado);
 
-        int sentadillasRestantes = ProgresoController.obtenerProgresoSentadillas(this);
-        txtProgresoRodilla.setText(sentadillasRestantes + "/20");
-        pbRodilla.setMax(20);
-        pbRodilla.setProgress(sentadillasRestantes);
+        ProgresoController.obtenerSesionesTotales(this, sesionesTotales -> {
+            txtSesiones.setText(String.valueOf(sesionesTotales));
+        });
+
+        ProgresoController.obtenerDiasDeRacha(this, diasRacha -> {
+            txtRacha.setText(String.valueOf(diasRacha));
+        });
+
+        ProgresoController.obtenerPorcentajeAdherenciaMensual(this, adherencia -> {
+            txtAdherencia.setText(adherencia + "%");
+        });
+
+        ProgresoController.obtenerProgresoSentadillas(this, sentadillasRestantes -> {
+            txtProgresoRodilla.setText(sentadillasRestantes + "/20");
+            pbRodilla.setMax(20);
+            pbRodilla.setProgress(sentadillasRestantes);
+        });
 
         txtProgresoHombro.setText("0/15");
         pbHombro.setMax(15);

@@ -114,14 +114,15 @@ public class ProgresoController {
 
             Cursor cursor = db.rawQuery(query, new String[]{u.getCorreo()});
 
-            int racha = 0;
+            int rachaCalculada = 0;
             if (cursor.moveToFirst()) {
-                racha = cursor.getInt(0);
+                rachaCalculada = cursor.getInt(0);
             }
             cursor.close();
             db.close();
 
-            AppExecutors.getInstance().mainThread().execute(() -> callback.onResult(racha));
+            final int rachaFinal = rachaCalculada;
+            AppExecutors.getInstance().mainThread().execute(() -> callback.onResult(rachaFinal));
         });
     }
 
@@ -146,12 +147,15 @@ public class ProgresoController {
                     " WHERE " + RutinaEntry.COLUMN_CORREO + " = ?";
             Cursor cursor = db.rawQuery(query, new String[]{u.getCorreo()});
 
-            int total = 0;
-            if (cursor.moveToFirst()) total = cursor.getInt(0);
+            int totalCalculado = 0;
+            if (cursor.moveToFirst()) {
+                totalCalculado = cursor.getInt(0);
+            }
             cursor.close();
             db.close();
 
-            AppExecutors.getInstance().mainThread().execute(() -> callback.onResult(total));
+            final int totalFinal = totalCalculado;
+            AppExecutors.getInstance().mainThread().execute(() -> callback.onResult(totalFinal));
         });
     }
 
@@ -177,12 +181,15 @@ public class ProgresoController {
                     RutinaEntry.COLUMN_TIPO + " = 'Sentadillas'";
             Cursor cursor = db.rawQuery(query, new String[]{u.getCorreo()});
 
-            int sentadillas = 0;
-            if (cursor.moveToFirst()) sentadillas = cursor.getInt(0);
+            int sentadillasCalculadas = 0;
+            if (cursor.moveToFirst()) {
+                sentadillasCalculadas = cursor.getInt(0);
+            }
             cursor.close();
             db.close();
 
-            AppExecutors.getInstance().mainThread().execute(() -> callback.onResult(sentadillas));
+            final int sentadillasFinal = sentadillasCalculadas;
+            AppExecutors.getInstance().mainThread().execute(() -> callback.onResult(sentadillasFinal));
         });
     }
 
