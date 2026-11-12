@@ -178,8 +178,8 @@ public class ProgresoController {
 
             String query = "SELECT COUNT(*) FROM " + RutinaEntry.TABLE_NAME +
                     " WHERE " + RutinaEntry.COLUMN_CORREO + " = ? AND " +
-                    RutinaEntry.COLUMN_TIPO + " = 'Sentadillas'";
-            Cursor cursor = db.rawQuery(query, new String[]{u.getCorreo()});
+                    RutinaEntry.COLUMN_TIPO + " = ?";
+            Cursor cursor = db.rawQuery(query, new String[]{u.getCorreo(), "Sentadillas"});
 
             int sentadillasCalculadas = 0;
             if (cursor.moveToFirst()) {
