@@ -73,19 +73,22 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
     @Override
     public void analyze(@NonNull ImageProxy imageProxy) {
         Image mediaImage = imageProxy.getImage();
-        if (mediaImage != null) {
-            int rotation = imageProxy.getImageInfo().getRotationDegrees();
-            int width = (rotation == 90 || rotation == 270) ? mediaImage.getHeight() : mediaImage.getWidth();
-            int height = (rotation == 90 || rotation == 270) ? mediaImage.getWidth() : mediaImage.getHeight();
-
-            InputImage image = InputImage.fromMediaImage(mediaImage, rotation);
-            detector.process(image)
-                    .addOnSuccessListener(pose -> {
-                        listener.onPoseDetectada(pose, width, height);
-                        procesarPose(pose);
-                    })
-                    .addOnCompleteListener(task -> imageProxy.close());
+        if (mediaImage == null) {
+            imageProxy.close();
+            return;
         }
+
+        int rotation = imageProxy.getImageInfo().getRotationDegrees();
+        int width = (rotation == 90 || rotation == 270) ? mediaImage.getHeight() : mediaImage.getWidth();
+        int height = (rotation == 90 || rotation == 270) ? mediaImage.getWidth() : mediaImage.getHeight();
+
+        InputImage image = InputImage.fromMediaImage(mediaImage, rotation);
+        detector.process(image)
+                .addOnSuccessListener(pose -> {
+                    listener.onPoseDetectada(pose, width, height);
+                    procesarPose(pose);
+                })
+                .addOnCompleteListener(task -> imageProxy.close());
     }
 
 
