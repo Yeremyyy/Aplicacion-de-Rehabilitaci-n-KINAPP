@@ -15,6 +15,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.kinapp.R;
 import com.example.kinapp.controlador.ProgresoController;
+import java.util.Locale;
 
 /**
  * Actividad encargada de mostrar el resumen analítico y métricas de la rutina finalizada.
@@ -55,14 +56,24 @@ public class ResumenRutinaActivity extends AppCompatActivity {
         txtPrecision = findViewById(R.id.txt_resumen_precision);
         txtReporte = findViewById(R.id.txt_reporte_ia);
 
-        txtTiempo.setText("01:30");
-        txtEjercicios.setText("12 / 12");
-        txtPrecision.setText("98%");
-        txtReporte.setText("Tuviste un excelente rango de movimiento en las sentadillas. Mantuviste la cadera estable y lograste la profundidad adecuada. ¡Sigue así!");
+        long duracionSeg = getIntent().getLongExtra("duracion_seg", 0);
+        int repeticiones = getIntent().getIntExtra("repeticiones", 0);
+        int correcciones = getIntent().getIntExtra("correcciones", 0);
+        int precision = Math.max(0, 100 - correcciones * 10);
+
+        txtTiempo.setText(String.format(Locale.US, "%02d:%02d", duracionSeg / 60, duracionSeg % 60));
+        txtEjercicios.setText(repeticiones + " / 12");
+        txtPrecision.setText(precision + "%");
+        txtReporte.setText(correcciones == 0
+                ? "Completaste las 12 sentadillas sin correcciones de profundidad. ¡Sigue así!"
+                : "Completaste las 12 sentadillas. El sistema te pidió bajar más la cadera "
+                + correcciones + (correcciones == 1 ? " vez" : " veces")
+                + ". Intenta flexionar más las rodillas en la próxima rutina.");
 
         btnCerrar.setOnClickListener(v -> finish());
 
         btnFinalizarGuardar.setOnClickListener(v -> {
+            btnFinalizarGuardar.setEnabled(false);
             ProgresoController.guardarRutinaCompletada(this, "Sentadillas", guardado -> {
                 if (guardado) {
                     Toast.makeText(ResumenRutinaActivity.this, "Progreso guardado correctamente", Toast.LENGTH_SHORT).show();
@@ -71,6 +82,7 @@ public class ResumenRutinaActivity extends AppCompatActivity {
                     startActivity(intent);
                     finish();
                 } else {
+                    btnFinalizarGuardar.setEnabled(true);
                     Toast.makeText(ResumenRutinaActivity.this, "Error al guardar el progreso", Toast.LENGTH_SHORT).show();
                 }
             });
