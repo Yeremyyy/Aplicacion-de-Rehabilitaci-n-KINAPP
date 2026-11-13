@@ -16,6 +16,10 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.kinapp.R;
 
+/**
+ * Pantalla de calibración previa a la rutina. Usa el acelerómetro del dispositivo para verificar
+ * que el teléfono esté en posición vertical y, cuando lo está, abre {@CamaraGuiadaActivity}.
+ */
 public class CalibracionSensorActivity extends AppCompatActivity implements SensorEventListener {
 
     private SensorManager sensorManager;
@@ -24,6 +28,12 @@ public class CalibracionSensorActivity extends AppCompatActivity implements Sens
     private ImageView btnVolver;
     private boolean calibrado = false;
 
+    /**
+     * Inicializa la vista y obtiene el acelerómetro mediante el SensorManager.
+     *
+     * @param savedInstanceState Estado guardado previo de la actividad.
+     * @throws android.view.InflateException Si falla la carga del layout XML.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,6 +55,9 @@ public class CalibracionSensorActivity extends AppCompatActivity implements Sens
         });
     }
 
+    /**
+     * Registra el listener del acelerómetro mientras la pantalla está visible y no se haya calibrado.
+     */
     @Override
     protected void onResume() {
         super.onResume();
@@ -53,6 +66,9 @@ public class CalibracionSensorActivity extends AppCompatActivity implements Sens
         }
     }
 
+    /**
+     * Libera el listener del acelerómetro al salir de la pantalla para evitar consumo innecesario de batería.
+     */
     @Override
     protected void onPause() {
         super.onPause();
@@ -61,6 +77,12 @@ public class CalibracionSensorActivity extends AppCompatActivity implements Sens
         }
     }
 
+    /**
+     * Evalúa la gravedad medida en el eje Y: si está entre 8,5 y 10,5 m/s² el teléfono está vertical.
+     * En ese caso muestra el mensaje de éxito, detiene el sensor y, tras 2 segundos, abre la cámara guiada.
+     *
+     * @param event Evento con los valores actuales del acelerómetro (m/s²).
+     */
     @Override
     public void onSensorChanged(SensorEvent event) {
         if (calibrado) return;
@@ -84,6 +106,12 @@ public class CalibracionSensorActivity extends AppCompatActivity implements Sens
         }
     }
 
+    /**
+     * No se utiliza; la calibración no depende de la precisión del sensor.
+     *
+     * @param sensor   Sensor cuya precisión cambió.
+     * @param accuracy Nuevo nivel de precisión.
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }

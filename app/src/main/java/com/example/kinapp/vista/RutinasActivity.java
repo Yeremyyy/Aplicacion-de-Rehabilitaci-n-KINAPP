@@ -12,6 +12,10 @@ import com.example.kinapp.modelo.Rutina;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Lista las rutinas disponibles en un RecyclerView y ofrece la navegación inferior. En este avance
+ * las rutinas son datos de ejemplo; el catálogo real se incorporará en una etapa posterior.
+ */
 public class RutinasActivity extends AppCompatActivity {
 
     private RecyclerView recyclerRutinas;

@@ -10,8 +10,18 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.kinapp.R;
 
+/**
+ * Pantalla reservada para la conversación entre paciente y especialista, prevista
+ * para una etapa posterior. Por ahora solo carga su layout.
+ */
 public class ChatActivity extends AppCompatActivity {
 
+    /**
+     * Inicializa la pantalla cargando su layout.
+     *
+     * @param savedInstanceState Estado guardado previo de la actividad.
+     * @throws android.view.InflateException Si falla la carga del layout XML.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

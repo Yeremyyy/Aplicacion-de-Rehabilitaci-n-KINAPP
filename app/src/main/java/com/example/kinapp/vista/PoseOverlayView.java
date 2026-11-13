@@ -10,6 +10,10 @@ import android.view.View;
 import com.google.mlkit.vision.pose.Pose;
 import com.google.mlkit.vision.pose.PoseLandmark;
 
+/**
+ * Vista personalizada que se superpone a la vista previa de la cámara y dibuja el esqueleto 2D
+ * del lado izquierdo del cuerpo (hombro, cadera, rodilla y tobillo) a partir de la pose de ML Kit.
+ */
 public class PoseOverlayView extends View {
     private Pose pose;
     private Paint paintPunto;
@@ -18,6 +22,13 @@ public class PoseOverlayView extends View {
     private int imageHeight;
     private boolean isFrontCamera = true;
 
+    /**
+     * Crea la vista y configura los pinceles: puntos rojos para las articulaciones y líneas verdes
+     * para los segmentos.
+     *
+     * @param context Contexto de la aplicación.
+     * @param attrs   Atributos definidos en el layout XML.
+     */
     public PoseOverlayView(Context context, AttributeSet attrs) {
         super(context, attrs);
         paintPunto = new Paint();
@@ -29,6 +40,14 @@ public class PoseOverlayView extends View {
         paintLinea.setStrokeWidth(10f);
     }
 
+    /**
+     * Actualiza la pose a dibujar y solicita repintar la vista.
+     *
+     * @param pose          Pose detectada por ML Kit en el último fotograma.
+     * @param imageWidth    Ancho del fotograma analizado, ya rotado.
+     * @param imageHeight   Alto del fotograma analizado, ya rotado.
+     * @param isFrontCamera true si la imagen viene de la cámara frontal (se refleja horizontalmente).
+     */
     public void setPose(Pose pose, int imageWidth, int imageHeight, boolean isFrontCamera) {
         this.pose = pose;
         this.imageWidth = imageWidth;
@@ -37,15 +56,37 @@ public class PoseOverlayView extends View {
         invalidate();
     }
 
+    /**
+     * Convierte una coordenada X de la imagen a la de la pantalla, reflejándola si la cámara es frontal.
+     *
+     * @param x       Coordenada X en el espacio de la imagen.
+     * @param scale   Factor de escala imagen-pantalla.
+     * @param offsetX Desplazamiento horizontal por el recorte de la vista previa.
+     * @return float Coordenada X en píxeles de la vista.
+     */
     private float translateX(float x, float scale, float offsetX) {
         float scaledX = x * scale + offsetX;
         return isFrontCamera ? getWidth() - scaledX : scaledX;
     }
 
+    /**
+     * Convierte una coordenada Y de la imagen a la de la pantalla.
+     *
+     * @param y       Coordenada Y en el espacio de la imagen.
+     * @param scale   Factor de escala imagen-pantalla.
+     * @param offsetY Desplazamiento vertical por el recorte de la vista previa.
+     * @return float Coordenada Y en píxeles de la vista.
+     */
     private float translateY(float y, float scale, float offsetY) {
         return y * scale + offsetY;
     }
 
+    /**
+     * Dibuja el esqueleto sobre el lienzo, escalando las coordenadas para que coincidan con la vista
+     * previa (recorte central). Solo dibuja si la confianza de la cadera supera 0,5.
+     *
+     * @param canvas Lienzo sobre el que se dibujan las líneas y los puntos.
+     */
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);

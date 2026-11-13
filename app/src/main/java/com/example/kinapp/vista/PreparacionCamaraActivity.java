@@ -10,8 +10,15 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.kinapp.R;
 
+
 public class PreparacionCamaraActivity extends AppCompatActivity {
 
+    /**
+     * Inicializa la pantalla cargando su layout.
+     *
+     * @param savedInstanceState Estado guardado previo de la actividad.
+     * @throws android.view.InflateException Si falla la carga del layout XML.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
