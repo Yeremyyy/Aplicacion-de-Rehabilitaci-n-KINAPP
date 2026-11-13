@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.speech.tts.TextToSpeech;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -36,6 +37,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+/**
+ * Pantalla de la rutina guiada de sentadillas. Abre la cámara frontal con CameraX, envía los
+ * fotogramas a {@SentadillaAnalizador} (ML Kit Pose Detection) y responde a sus eventos:
+ * actualiza el contador, dibuja el esqueleto y da instrucciones por voz (TextToSpeech).
+ * Al completar las 12 repeticiones abre {@ResumenRutinaActivity} con el tiempo,
+ * las repeticiones y las correcciones de la sesión.
+ */
 public class CamaraGuiadaActivity extends AppCompatActivity implements SentadillaAnalizador.SentadillaListener {
 
     private static final int REQUEST_CODE_PERMISSIONS = 10;
@@ -51,6 +59,16 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
     private ProcessCameraProvider cameraProviderGlobal;
     private SentadillaAnalizador analizador;
 
+    private long inicioRutinaMs = 0;
+
+
+
+    /**
+     * Inicializa la vista, el motor de voz y los botones, y solicita el permiso de cámara si falta.
+     *
+     * @param savedInstanceState Estado guardado previo de la actividad.
+     * @throws android.view.InflateException Si falla la carga del layout XML.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +115,11 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
         }
     }
 
+    /**
+     * Configura CameraX con vista previa y análisis de imágenes sobre la cámara frontal, crea el
+     * analizador de sentadillas y lanza la cuenta regresiva. Si CameraX no puede inicializarse,
+     * avisa al usuario con un Toast.
+     */
     private void iniciarCamara() {
         ListenableFuture<ProcessCameraProvider> cameraProviderFuture = ProcessCameraProvider.getInstance(this);
 
@@ -126,6 +149,10 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
         }, ContextCompat.getMainExecutor(this));
     }
 
+    /**
+     * Muestra y pronuncia las instrucciones previas a la rutina (ponerse de lado, prepararse) durante
+     * 10 segundos. Al terminar, registra el instante de inicio y habilita el conteo de repeticiones.
+     */
     private void iniciarCuentaRegresiva() {
         txtFeedback.setText("Ponte de lado frente a la cámara...");
 
@@ -160,12 +187,19 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
                     tts.speak("¡Comienza!", TextToSpeech.QUEUE_FLUSH, null, null);
                 }
                 if (analizador != null) {
+                    inicioRutinaMs = SystemClock.elapsedRealtime();
                     analizador.iniciarRutina();
                 }
             }
         }.start();
     }
 
+    /**
+     * Callback del analizador: actualiza el contador en pantalla. Al llegar a 12 repeticiones libera
+     * la cámara y, tras 2,5 s, abre el resumen enviando duración, repeticiones y correcciones.
+     *
+     * @param reps Número de repeticiones válidas acumuladas.
+     */
     @Override
     public void onRepeticion(int reps) {
         runOnUiThread(() -> {
@@ -180,8 +214,14 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
                 }
                 txtFeedback.setText("¡Rutina Completada!");
 
+                final long duracionSeg = inicioRutinaMs == 0 ? 0 : (SystemClock.elapsedRealtime() - inicioRutinaMs) / 1000;
+                final int correcciones = analizador != null ? analizador.getCorrecciones() : 0;
+
                 new Handler(Looper.getMainLooper()).postDelayed(() -> {
                     Intent intent = new Intent(CamaraGuiadaActivity.this, ResumenRutinaActivity.class);
+                    intent.putExtra("duracion_seg", duracionSeg);
+                    intent.putExtra("repeticiones", 12);
+                    intent.putExtra("correcciones", correcciones);
                     startActivity(intent);
                     finish();
                 }, 2500);
@@ -189,6 +229,12 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
         });
     }
 
+    /**
+     * Callback del analizador: muestra un mensaje de retroalimentación y, si corresponde, lo lee en voz alta.
+     *
+     * @param mensaje  Texto de retroalimentación para el usuario.
+     * @param usarVoz  Indica si el mensaje debe reproducirse con TextToSpeech.
+     */
     @Override
     public void onFeedback(String mensaje, boolean usarVoz) {
         runOnUiThread(() -> {
@@ -199,15 +245,36 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
         });
     }
 
+
+    /**
+     * Callback del analizador: entrega la pose detectada a la vista que dibuja el esqueleto.
+     *
+     * @param pose        Puntos clave detectados por ML Kit.
+     * @param imageWidth  Ancho del fotograma analizado, ya rotado.
+     * @param imageHeight Alto del fotograma analizado, ya rotado.
+     */
     @Override
     public void onPoseDetectada(Pose pose, int imageWidth, int imageHeight) {
         runOnUiThread(() -> vistaEsqueleto.setPose(pose, imageWidth, imageHeight, true));
     }
 
+    /**
+     * Comprueba si el permiso de cámara está concedido.
+     *
+     * @return true si la app tiene permiso para usar la cámara.
+     */
     private boolean allPermissionsGranted() {
         return ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) == PackageManager.PERMISSION_GRANTED;
     }
 
+    /**
+     * Recibe la respuesta del usuario al permiso de cámara: inicia la cámara si lo concedió; si no,
+     * informa y cierra la pantalla.
+     *
+     * @param requestCode  Código de la solicitud de permisos.
+     * @param permissions  Permisos solicitados.
+     * @param grantResults Resultado de cada permiso (concedido o denegado).
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -221,6 +288,9 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
         }
     }
 
+    /**
+     * Libera los recursos: detiene el hilo de análisis y el motor de voz.
+     */
     @Override
     protected void onDestroy() {
         super.onDestroy();
