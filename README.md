@@ -148,7 +148,7 @@ SQLite local (`KinApp.db`) administrada por `DatabaseHelper` y las clases contra
 | `fecha` | TEXT | Formato `YYYY-MM-DD` |
 | `tipo` | TEXT | Ej.: `Sentadillas` |
 
-Un usuario registra muchas rutinas (relación 1 a N). El diagrama entidad-relación está en [`assets/`](#8-documentación-visual).
+Un usuario registra muchas rutinas (relación 1 a N). El diagrama entidad-relación está en [Documentación visual](#8-documentación-visual).
 
 ---
 
@@ -161,7 +161,7 @@ Un usuario registra muchas rutinas (relación 1 a N). El diagrama entidad-relaci
 
 | Inicio de sesión | Registro |
 |---|---|
-| ![Inicio de sesión](assets/capturas/login.png) | ![Registro](assets/capturas/registro.png) |
+| ![Inicio de sesión](app/src/main/assets/capturas/login.png) | ![Registro](app/src/main/assets/capturas/registro.png) |
 
 ### Rutina de sentadillas
 
@@ -172,7 +172,7 @@ Un usuario registra muchas rutinas (relación 1 a N). El diagrama entidad-relaci
 
 | Panel | Calibración | Cámara guiada | Resumen                                  |
 |---|---|---|------------------------------------------|
-| ![Panel](assets/capturas/panel.png) | ![Calibración](assets/capturas/calibracion.png) | ![Cámara](assets/capturas/camara.png) | ![Resumen](assets/capturas/resumen.jpeg) |
+| ![Panel](app/src/main/assets/capturas/panel.png) | ![Calibración](app/src/main/assets/capturas/calibracion.png) | ![Cámara](app/src/main/assets/capturas/camara.png) | ![Resumen](app/src/main/assets/capturas/resumen.jpeg) |
 
 ### Progreso y perfil
 
@@ -181,26 +181,38 @@ Un usuario registra muchas rutinas (relación 1 a N). El diagrama entidad-relaci
 
 | Progreso                                   | Perfil |
 |--------------------------------------------|---|
-| ![Progreso](assets/capturas/progreso.jpeg) | ![Perfil](assets/capturas/perfil.png) |
+| ![Progreso](app/src/main/assets/capturas/progreso.jpeg) | ![Perfil](app/src/main/assets/capturas/perfil.png) |
 
 ---
 
 ## 8. Documentación visual
 
-| Diagrama | Archivo                                                                             |
-|---|-------------------------------------------------------------------------------------|
-| Arquitectura MVC | `assets/Diagrama de Arquitectura/Diagrama_de_Arquitectura_MVC.jpg`                  |
-| Casos de uso (Paciente y Especialista) | `assets/Diagrama de caso de uso UML/UML_general_Paciente_y_Especialista.jpg`        |
-| Flujo de registro y geolocalización | `assets/Diagrama de Flujo_Actividad/Diagrama_de_Flujo_Geolocalizacion_registro.jpg` |
-| Flujo de navegación y progreso | `assets/Diagrama de Flujo_Actividad/Diagrama_de_Flujo_navegacion_y_progreso.jpg`    |
-| Flujo de rutinas | `assets/Diagrama de Flujo_Actividad/Diagrama_de_Flujo_Rutinas.jpg`                  |
-| Modelo entidad-relación | `assets/MER/MER_V0.jpg`                                                             |
+| Diagrama | Archivo |
+|---|---|
+| Arquitectura MVC | `app/src/main/assets/Diagrama de Arquitectura/Diagrama de Arquitectura MVC.jpg` |
+| Casos de uso (Paciente y Especialista) | `app/src/main/assets/Diagrama de caso de uso UML/UML general Paciente y Especialista.jpg` |
+| Flujo de registro y geolocalización | `app/src/main/assets/Diagrama de Flujo_Actividad/Diagrama de Flujo Geolocalizacion registro.jpg` |
+| Flujo de navegación y progreso | `app/src/main/assets/Diagrama de Flujo_Actividad/Diagrama de Flujo navegacion y progreso.jpg` |
+| Flujo de rutinas | `app/src/main/assets/Diagrama de Flujo_Actividad/Diagrama de Flujo Rutinas.jpg` |
+| Modelo entidad-relación | `app/src/main/assets/MER/MER V0.jpg` |
 
-![Arquitectura MVC](assets/Diagrama_de_Arquitectura_MVC.jpg)
+### Arquitectura MVC
+![Arquitectura MVC](app/src/main/assets/Diagrama%20de%20Arquitectura/Diagrama%20de%20Arquitectura%20MVC.jpg)
 
-![Modelo entidad-relación](assets/MER_V0.jpg)
+### Casos de uso
+![Casos de uso](app/src/main/assets/Diagrama%20de%20caso%20de%20uso%20UML/UML%20general%20Paciente%20y%20Especialista.jpg)
 
-![Flujo de rutinas](assets/Diagrama_de_Flujo_Rutinas.jpg)
+### Flujo de registro y geolocalización
+![Flujo de registro](app/src/main/assets/Diagrama%20de%20Flujo_Actividad/Diagrama%20de%20Flujo%20Geolocalizacion%20registro.jpg)
+
+### Flujo de navegación y progreso
+![Flujo de navegación](app/src/main/assets/Diagrama%20de%20Flujo_Actividad/Diagrama%20de%20Flujo%20navegacion%20y%20progreso.jpg)
+
+### Flujo de rutinas
+![Flujo de rutinas](app/src/main/assets/Diagrama%20de%20Flujo_Actividad/Diagrama%20de%20Flujo%20Rutinas.jpg)
+
+### Modelo entidad-relación
+![Modelo entidad-relación](app/src/main/assets/MER/MER%20V0.jpg)
 
 La documentación JavaDoc (`@param`, `@return`, `@throws`) está integrada en el código fuente de las clases de modelo, controlador y vista.
 
