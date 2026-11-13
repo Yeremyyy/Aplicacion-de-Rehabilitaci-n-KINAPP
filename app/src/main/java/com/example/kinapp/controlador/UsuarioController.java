@@ -29,7 +29,7 @@ public class UsuarioController {
      *
      * @param context    Es el contexto de la interfaz gráfica que invoca el registro.
      * @param correo     Correo electrónico único ingresado por el usuario.
-     * @param contrasena Contraseña de acceso en texto plano.
+     * @param contrasena Contraseña en texto plano; se almacena como hash PBKDF2 con sal.
      * @param nombre     Nombre completo del usuario.
      * @param fechaNac   Fecha de nacimiento con formato texto.
      * @param ubicacion  Ciudad detectada automáticamente mediante LocationManager y Geocoder.
@@ -43,7 +43,7 @@ public class UsuarioController {
 
             ContentValues values = new ContentValues();
             values.put(UsuarioEntry.COLUMN_CORREO, correo);
-            values.put(UsuarioEntry.COLUMN_CONTRASENA, contrasena);
+            values.put(UsuarioEntry.COLUMN_CONTRASENA, SeguridadUtil.hashContrasena(contrasena));
             values.put(UsuarioEntry.COLUMN_NOMBRE, nombre);
             values.put(UsuarioEntry.COLUMN_FECHA, fechaNac);
             values.put(UsuarioEntry.COLUMN_TELEFONO, "");
@@ -80,23 +80,28 @@ public class UsuarioController {
                     UsuarioEntry.COLUMN_TELEFONO
             };
 
-            String selection = UsuarioEntry.COLUMN_CORREO + " = ? AND " + UsuarioEntry.COLUMN_CONTRASENA + " = ?";
-            String[] selectionArgs = {correo, contrasena};
+            String selection = UsuarioEntry.COLUMN_CORREO + " = ?";
+            String[] selectionArgs = {correo};
 
             Cursor cursor = db.query(UsuarioEntry.TABLE_NAME, projection, selection, selectionArgs, null, null, null);
 
-            boolean isValid = cursor.moveToFirst();
-            if (isValid) {
-                String nombre = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
-                String fecha = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_FECHA));
-                String tel = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_TELEFONO));
-                usuarioActual = new Usuario(correo, contrasena, nombre, fecha, tel);
+            boolean valido = false;
+            if (cursor.moveToFirst()) {
+                String hashGuardado = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_CONTRASENA));
+                valido = SeguridadUtil.verificarContrasena(contrasena, hashGuardado);
+                if (valido) {
+                    String nombre = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_NOMBRE));
+                    String fecha = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_FECHA));
+                    String tel = cursor.getString(cursor.getColumnIndexOrThrow(UsuarioEntry.COLUMN_TELEFONO));
+                    usuarioActual = new Usuario(correo, hashGuardado, nombre, fecha, tel);
+                }
             }
 
             cursor.close();
             db.close();
 
-            AppExecutors.getInstance().mainThread().execute(() -> callback.onResult(isValid));
+            final boolean resultado = valido;
+            AppExecutors.getInstance().mainThread().execute(() -> callback.onResult(resultado));
         });
     }
 
@@ -197,7 +202,8 @@ public class UsuarioController {
             SQLiteDatabase db = dbHelper.getWritableDatabase();
 
             ContentValues values = new ContentValues();
-            values.put(UsuarioEntry.COLUMN_CONTRASENA, nuevaContrasena);
+            String nuevoHash = SeguridadUtil.hashContrasena(nuevaContrasena);
+            values.put(UsuarioEntry.COLUMN_CONTRASENA, nuevoHash);
 
             String selection = UsuarioEntry.COLUMN_CORREO + " = ?";
             String[] selectionArgs = {usuarioActual.getCorreo()};
@@ -206,8 +212,8 @@ public class UsuarioController {
             db.close();
 
             boolean exito = (count > 0);
-            if(exito) {
-                usuarioActual = new Usuario(usuarioActual.getCorreo(), nuevaContrasena, usuarioActual.getNombre(), usuarioActual.getFechaNac(), usuarioActual.getTelefono());
+            if (exito) {
+                usuarioActual = new Usuario(usuarioActual.getCorreo(), nuevoHash, usuarioActual.getNombre(), usuarioActual.getFechaNac(), usuarioActual.getTelefono());
             }
 
             AppExecutors.getInstance().mainThread().execute(() -> callback.onResult(exito));
