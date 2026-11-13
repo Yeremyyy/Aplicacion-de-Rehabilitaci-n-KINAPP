@@ -30,6 +30,9 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
     private long tiempoEnZonaMedia = 0;
     private boolean rutinaIniciada = false;
 
+    private int correcciones = 0;
+    public int getCorrecciones() { return correcciones; }
+
     /**
      * Es la interfaz de comunicación (Callback) utilizada para enviar los resultados
      * del análisis biomecánico de vuelta a la Capa Vista de CamaraGuiadaActivity.
@@ -135,6 +138,7 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
             } else if (tiempoActual - tiempoEnZonaMedia > 1500) {
                 if (tiempoActual - ultimoFeedback > 4000) {
                     listener.onFeedback("Baja un poco más la cadera", true);
+                    correcciones++;
                     ultimoFeedback = tiempoActual;
                 }
             }
