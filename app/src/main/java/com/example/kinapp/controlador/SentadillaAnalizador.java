@@ -30,8 +30,17 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
     private long tiempoEnZonaMedia = 0;
     private boolean rutinaIniciada = false;
 
+    private static final float UMBRAL_CONFIANZA = 0.6f;
     private int correcciones = 0;
-    public int getCorrecciones() { return correcciones; }
+
+    /**
+     * Indica cuántos avisos de profundidad se emitieron durante la rutina.
+     *
+     * @return Cantidad de correcciones acumuladas.
+     */
+    public int getCorrecciones() {
+        return correcciones;
+    }
 
     /**
      * Es la interfaz de comunicación (Callback) utilizada para enviar los resultados
@@ -96,7 +105,8 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
 
 
     /**
-     * Es el núcleo del algoritmo biomecánico. Extrae las coordenadas espaciales (X, Y) de cadera, rodilla y tobillo.
+     * Es el núcleo del algoritmo biomecánico. Extrae las coordenadas espaciales (X, Y) de cadera, rodilla y tobillo
+     * de la pierna con mejor detección.
      * Implementa un filtro de seguridad (Likelihood > 0.6f) para ignorar detecciones con baja confiabilidad, basicamente es la probabilidad de confianza,
      * evitando falsos positivos por mala iluminación u oclusión.
      * Además, aplica temporizadores de estabilización para evitar bombardear al usuario con feedback de voz repetitivo.
@@ -106,19 +116,10 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
     private void procesarPose(Pose pose) {
         if (!rutinaIniciada || repeticiones >= 12) return;
 
-        PoseLandmark cadera = pose.getPoseLandmark(PoseLandmark.LEFT_HIP);
-        PoseLandmark rodilla = pose.getPoseLandmark(PoseLandmark.LEFT_KNEE);
-        PoseLandmark tobillo = pose.getPoseLandmark(PoseLandmark.LEFT_ANKLE);
+        PoseLandmark[] pierna = seleccionarPierna(pose);
+        if (confianzaMinima(pierna) < UMBRAL_CONFIANZA) return;
 
-        if (cadera == null || rodilla == null || tobillo == null) return;
-
-        if (cadera.getInFrameLikelihood() < 0.6f ||
-                rodilla.getInFrameLikelihood() < 0.6f ||
-                tobillo.getInFrameLikelihood() < 0.6f) {
-            return;
-        }
-
-        double angulo = calcularAngulo(cadera, rodilla, tobillo);
+        double angulo = calcularAngulo(pierna[0], pierna[1], pierna[2]);
         long tiempoActual = System.currentTimeMillis();
 
         if (angulo > 150) {
@@ -143,6 +144,50 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
                 }
             }
         }
+    }
+
+    /**
+     * Selecciona la pierna con mejor detección entre la izquierda y la derecha.
+     *
+     * @param pose Pose detectada por ML Kit en el fotograma actual.
+     * @return Arreglo con cadera, rodilla y tobillo, en ese orden, de la pierna elegida.
+     */
+    private PoseLandmark[] seleccionarPierna(Pose pose) {
+        PoseLandmark[] izquierda = {
+                pose.getPoseLandmark(PoseLandmark.LEFT_HIP),
+                pose.getPoseLandmark(PoseLandmark.LEFT_KNEE),
+                pose.getPoseLandmark(PoseLandmark.LEFT_ANKLE)
+        };
+        PoseLandmark[] derecha = {
+                pose.getPoseLandmark(PoseLandmark.RIGHT_HIP),
+                pose.getPoseLandmark(PoseLandmark.RIGHT_KNEE),
+                pose.getPoseLandmark(PoseLandmark.RIGHT_ANKLE)
+        };
+        return confianzaMinima(derecha) > confianzaMinima(izquierda) ? derecha : izquierda;
+    }
+
+    /**
+     * Calcula la confianza más baja entre las tres articulaciones de una pierna.
+     *
+     * @param pierna Arreglo con cadera, rodilla y tobillo.
+     * @return Menor probabilidad de presencia en cuadro, o 0 si falta alguna articulación.
+     */
+    private float confianzaMinima(PoseLandmark[] pierna) {
+        float minima = 1f;
+        for (PoseLandmark punto : pierna) {
+            if (punto == null) {
+                return 0f;
+            }
+            minima = Math.min(minima, punto.getInFrameLikelihood());
+        }
+        return minima;
+    }
+
+    /**
+     * Libera el detector de ML Kit. Debe invocarse al destruir la pantalla de cámara.
+     */
+    public void cerrar() {
+        detector.close();
     }
 
     /**

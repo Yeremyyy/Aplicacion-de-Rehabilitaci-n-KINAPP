@@ -61,6 +61,8 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
     private SentadillaAnalizador analizador;
 
     private long inicioRutinaMs = 0;
+    private CountDownTimer cuentaRegresiva;
+    private final Handler manejador = new Handler(Looper.getMainLooper());
 
 
 
@@ -158,13 +160,13 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
     private void iniciarCuentaRegresiva() {
         txtFeedback.setText("Ponte de lado frente a la cámara...");
 
-        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+        manejador.postDelayed(() -> {
             if (sonidoActivado && tts != null) {
                 tts.speak("Ponte de lado frente a la cámara.", TextToSpeech.QUEUE_FLUSH, null, null);
             }
         }, 500);
 
-        new CountDownTimer(10000, 1000) {
+        cuentaRegresiva = new CountDownTimer(10000, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
                 long segundos = millisUntilFinished / 1000;
@@ -193,7 +195,8 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
                     analizador.iniciarRutina();
                 }
             }
-        }.start();
+        };
+        cuentaRegresiva.start();
     }
 
     /**
@@ -219,7 +222,7 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
                 final long duracionSeg = inicioRutinaMs == 0 ? 0 : (SystemClock.elapsedRealtime() - inicioRutinaMs) / 1000;
                 final int correcciones = analizador != null ? analizador.getCorrecciones() : 0;
 
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                manejador.postDelayed(() -> {
                     Intent intent = new Intent(CamaraGuiadaActivity.this, ResumenRutinaActivity.class);
                     intent.putExtra("duracion_seg", duracionSeg);
                     intent.putExtra("repeticiones", 12);
@@ -291,12 +294,23 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
     }
 
     /**
-     * Libera los recursos: detiene el hilo de análisis y el motor de voz.
+     * Libera los recursos de la pantalla: cancela temporizadores pendientes, desvincula la cámara,
+     * detiene el hilo de análisis, cierra el detector de ML Kit y apaga el motor de voz.
      */
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (cuentaRegresiva != null) {
+            cuentaRegresiva.cancel();
+        }
+        manejador.removeCallbacksAndMessages(null);
+        if (cameraProviderGlobal != null) {
+            cameraProviderGlobal.unbindAll();
+        }
         cameraExecutor.shutdown();
+        if (analizador != null) {
+            analizador.cerrar();
+        }
         if (tts != null) {
             tts.stop();
             tts.shutdown();

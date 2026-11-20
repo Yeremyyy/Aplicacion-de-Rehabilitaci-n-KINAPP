@@ -27,6 +27,7 @@ public class CalibracionSensorActivity extends AppCompatActivity implements Sens
     private TextView txtEstadoSensor;
     private ImageView btnVolver;
     private boolean calibrado = false;
+    private final Handler manejador = new Handler(Looper.getMainLooper());
 
     /**
      * Inicializa la vista y obtiene el acelerómetro mediante el SensorManager.
@@ -95,7 +96,7 @@ public class CalibracionSensorActivity extends AppCompatActivity implements Sens
             txtEstadoSensor.setTextColor(Color.parseColor("#4CAF50"));
             sensorManager.unregisterListener(this);
 
-            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+            manejador.postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     Intent intent = new Intent(CalibracionSensorActivity.this, CamaraGuiadaActivity.class);
@@ -115,4 +116,14 @@ public class CalibracionSensorActivity extends AppCompatActivity implements Sens
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
     }
+
+    /**
+     * Cancela la apertura pendiente de la cámara si el usuario sale de la pantalla antes de tiempo.
+     */
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        manejador.removeCallbacksAndMessages(null);
+    }
 }
+
