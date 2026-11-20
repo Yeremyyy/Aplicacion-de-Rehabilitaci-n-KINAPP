@@ -36,6 +36,7 @@ import java.util.Locale;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import android.view.WindowManager;
 
 /**
  * Pantalla de la rutina guiada de sentadillas. Abre la cámara frontal con CameraX, envía los
@@ -72,6 +73,7 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_camara_guiada);
 

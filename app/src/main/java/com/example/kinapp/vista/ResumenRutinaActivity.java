@@ -16,6 +16,7 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.kinapp.R;
 import com.example.kinapp.controlador.ProgresoController;
 import java.util.Locale;
+import android.view.WindowManager;
 
 /**
  * Actividad encargada de mostrar el resumen analítico y métricas de la rutina finalizada.
@@ -40,6 +41,7 @@ public class ResumenRutinaActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_resumen_rutina);
 

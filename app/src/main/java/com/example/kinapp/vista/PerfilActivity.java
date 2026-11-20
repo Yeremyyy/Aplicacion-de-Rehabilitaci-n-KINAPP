@@ -18,6 +18,7 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.example.kinapp.R;
 import com.example.kinapp.controlador.UsuarioController;
 import com.example.kinapp.modelo.Usuario;
+import android.view.WindowManager;
 
 /**
  * Actividad encargada de gestionar la información de perfil del usuario,
@@ -48,6 +49,7 @@ public class PerfilActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
         setContentView(R.layout.activity_perfil);
 
         txtNombre = findViewById(R.id.txt_nombre_perfil);
