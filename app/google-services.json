@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "852828228926",
+    "project_id": "kinapp-9a016",
+    "storage_bucket": "kinapp-9a016.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:852828228926:android:a6f2bc0ddca4e19632306f",
+        "android_client_info": {
+          "package_name": "com.example.kinapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEOKjxe3Slx-yXVOH1PP54un4UzfRs4e0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
