@@ -21,6 +21,13 @@ public class RutinasActivity extends AppCompatActivity {
     private RecyclerView recyclerRutinas;
     private BottomNavigationView bottomNav;
 
+    /**
+     * Inicializa la lista de rutinas con datos de ejemplo y configura la navegación inferior.
+     * Será reemplazada por la rutina asignada por el especialista desde Firestore.
+     *
+     * @param savedInstanceState Estado guardado previo de la actividad.
+     * @throws android.view.InflateException Si falla la carga del layout XML.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

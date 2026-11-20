@@ -10,7 +10,10 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.example.kinapp.R;
 
-
+/**
+ * Pantalla reservada para la preparación previa a la cámara. No forma parte del flujo actual
+ * (Calibración, Cámara guiada y Resumen); se conserva para etapas posteriores.
+ */
 public class PreparacionCamaraActivity extends AppCompatActivity {
 
     /**

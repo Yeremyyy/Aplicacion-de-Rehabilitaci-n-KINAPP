@@ -55,6 +55,14 @@ public final class SeguridadUtil {
         }
     }
 
+    /**
+     * Deriva una clave a partir de la contraseña y la sal usando PBKDF2WithHmacSHA256.
+     *
+     * @param contrasena Contraseña en texto plano.
+     * @param sal        Sal aleatoria de 16 bytes asociada al usuario.
+     * @return Arreglo de 32 bytes con la clave derivada.
+     * @throws IllegalStateException Si el algoritmo no está disponible en el dispositivo.
+     */
     private static byte[] derivar(String contrasena, byte[] sal) {
         try {
             PBEKeySpec spec = new PBEKeySpec(contrasena.toCharArray(), sal, ITERACIONES, LONGITUD_CLAVE_BITS);

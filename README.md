@@ -79,7 +79,7 @@ Quedan fuera de este avance y se abordarán en etapas posteriores: diferenciaci�
 6. **Feedback**: si el usuario permanece en la zona intermedia más de 1,5 s, se emite "Baja un poco más la cadera" por voz (máximo un aviso cada 4 s). Cada aviso cuenta como una corrección en el resumen.
 7. **Resumen**: al completar la meta se muestran el tiempo, las repeticiones y la precisión, calculada como `100 % − 10 % por corrección` (mínimo 0 %).
 
-> Limitación conocida: el análisis usa la pierna izquierda, por lo que el usuario debe ubicarse de lado con su costado izquierdo visible para la cámara.
+> > El analizador evalúa ambas piernas y trabaja con la de mayor confianza de detección, por lo que el usuario puede ubicarse con cualquiera de sus costados hacia la cámara.
 
 ### Sensores y hardware utilizados
 
