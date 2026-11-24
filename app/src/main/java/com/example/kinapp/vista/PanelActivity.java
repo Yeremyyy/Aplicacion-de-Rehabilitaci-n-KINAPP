@@ -26,6 +26,9 @@ import com.example.kinapp.R;
 import com.example.kinapp.controlador.UsuarioController;
 import com.example.kinapp.modelo.Usuario;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.example.kinapp.controlador.RutinaController;
+import com.example.kinapp.modelo.RutinaAsignada;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * Actividad principal del panel de control de la aplicación.
@@ -45,6 +48,8 @@ public class PanelActivity extends AppCompatActivity {
     private LinearLayout btnProgreso;
     private LinearLayout btnCamara;
     private LinearLayout btnMensajes;
+    private ValueEventListener oyenteRutina;
+    private RutinaAsignada rutinaActiva;
 
     /**
      * Inicializa los componentes visuales, recupera la sesión del usuario actual
@@ -68,8 +73,7 @@ public class PanelActivity extends AppCompatActivity {
         btnCamara = findViewById(R.id.btn_camara_grid);
         btnMensajes = findViewById(R.id.btn_mensajes_grid);
 
-        txtTituloRutina.setText("Sentadillas");
-        txtInfoRutina.setText("Cámara guiada · 12 reps");
+        mostrarRutina(null);
 
         Usuario u = UsuarioController.getUsuarioActual();
         if (u != null) {
@@ -80,13 +84,8 @@ public class PanelActivity extends AppCompatActivity {
         btnCatalogo.setOnClickListener(v -> mostrarToastEnDesarrollo());
         btnMensajes.setOnClickListener(v -> mostrarToastEnDesarrollo());
 
-        btnCamara.setOnClickListener(v -> {
-            startActivity(new Intent(PanelActivity.this, CalibracionSensorActivity.class));
-        });
-
-        btnComenzarTerapia.setOnClickListener(v -> {
-            startActivity(new Intent(PanelActivity.this, CalibracionSensorActivity.class));
-        });
+        btnCamara.setOnClickListener(v -> abrirCalibracion());
+        btnComenzarTerapia.setOnClickListener(v -> abrirCalibracion());
 
         btnProgreso.setOnClickListener(v -> {
             startActivity(new Intent(PanelActivity.this, ProgresoActivity.class));
@@ -182,5 +181,61 @@ public class PanelActivity extends AppCompatActivity {
      */
     private void mostrarToastEnDesarrollo() {
         Toast.makeText(this, "Funcionalidad en desarrollo", Toast.LENGTH_SHORT).show();
+    }
+
+    /**
+     * Comienza a escuchar en tiempo real la rutina pendiente del paciente en Realtime Database.
+     */
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Usuario u = UsuarioController.getUsuarioActual();
+        if (u != null) {
+            oyenteRutina = RutinaController.escucharRutinaActiva(u.getUid(), rutina -> {
+                rutinaActiva = rutina;
+                mostrarRutina(rutina);
+            });
+        }
+    }
+
+    /**
+     * Libera el escuchador de Realtime Database al salir de la pantalla para evitar fugas
+     * y consumo innecesario de datos.
+     */
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Usuario u = UsuarioController.getUsuarioActual();
+        if (u != null && oyenteRutina != null) {
+            RutinaController.dejarDeEscuchar(u.getUid(), oyenteRutina);
+            oyenteRutina = null;
+        }
+    }
+
+    /**
+     * Actualiza la tarjeta "Rutina de hoy" con la rutina asignada o, si no hay ninguna,
+     * con la rutina libre de sentadillas.
+     *
+     * @param rutina Rutina pendiente del paciente, o null si no tiene ninguna.
+     */
+    private void mostrarRutina(RutinaAsignada rutina) {
+        int repeticiones = rutina != null ? rutina.getRepeticiones() : RutinaAsignada.REPETICIONES_POR_DEFECTO;
+        txtTituloRutina.setText(rutina != null ? rutina.getEjercicio() : "Sentadillas");
+        txtInfoRutina.setText(rutina != null
+                ? "Asignada por tu especialista · " + repeticiones + " reps"
+                : "Cámara guiada · " + repeticiones + " reps");
+    }
+
+    /**
+     * Abre la calibración enviando la meta de repeticiones y el identificador de la rutina asignada.
+     */
+    private void abrirCalibracion() {
+        Intent intent = new Intent(PanelActivity.this, CalibracionSensorActivity.class);
+        intent.putExtra(RutinaAsignada.EXTRA_META, rutinaActiva != null
+                ? rutinaActiva.getRepeticiones() : RutinaAsignada.REPETICIONES_POR_DEFECTO);
+        if (rutinaActiva != null) {
+            intent.putExtra(RutinaAsignada.EXTRA_RUTINA_ID, rutinaActiva.getId());
+        }
+        startActivity(intent);
     }
 }
