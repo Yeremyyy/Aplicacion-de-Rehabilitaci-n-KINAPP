@@ -37,13 +37,14 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import android.view.WindowManager;
+import com.example.kinapp.modelo.RutinaAsignada;
 
 /**
  * Pantalla de la rutina guiada de sentadillas. Abre la cámara frontal con CameraX, envía los
- * fotogramas a {@SentadillaAnalizador} (ML Kit Pose Detection) y responde a sus eventos:
+ * fotogramas a {@link SentadillaAnalizador} (ML Kit Pose Detection) y responde a sus eventos:
  * actualiza el contador, dibuja el esqueleto y da instrucciones por voz (TextToSpeech).
- * Al completar las 12 repeticiones abre {@ResumenRutinaActivity} con el tiempo,
- * las repeticiones y las correcciones de la sesión.
+ * Al completar la meta de repeticiones de la rutina abre {@link ResumenRutinaActivity} con el
+ * tiempo, las repeticiones y las correcciones de la sesión.
  */
 public class CamaraGuiadaActivity extends AppCompatActivity implements SentadillaAnalizador.SentadillaListener {
 
@@ -61,6 +62,8 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
     private SentadillaAnalizador analizador;
 
     private long inicioRutinaMs = 0;
+    private int metaRepeticiones = RutinaAsignada.REPETICIONES_POR_DEFECTO;
+    private String rutinaId;
     private CountDownTimer cuentaRegresiva;
     private final Handler manejador = new Handler(Looper.getMainLooper());
 
@@ -91,6 +94,10 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
         txtContador = findViewById(R.id.txt_contador_reps);
         btnCerrar = findViewById(R.id.btn_cerrar_camara);
         btnSonido = findViewById(R.id.btn_sonido);
+
+        metaRepeticiones = getIntent().getIntExtra(RutinaAsignada.EXTRA_META, RutinaAsignada.REPETICIONES_POR_DEFECTO);
+        rutinaId = getIntent().getStringExtra(RutinaAsignada.EXTRA_RUTINA_ID);
+        txtContador.setText("0 / " + metaRepeticiones);
 
         cameraExecutor = Executors.newSingleThreadExecutor();
 
@@ -138,7 +145,7 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
                         .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                         .build();
 
-                analizador = new SentadillaAnalizador(this);
+                analizador = new SentadillaAnalizador(this, metaRepeticiones);
                 imageAnalysis.setAnalyzer(cameraExecutor, analizador);
 
                 CameraSelector cameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA;
@@ -200,17 +207,18 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
     }
 
     /**
-     * Callback del analizador: actualiza el contador en pantalla. Al llegar a 12 repeticiones libera
-     * la cámara y, tras 2,5 s, abre el resumen enviando duración, repeticiones y correcciones.
+     * Callback del analizador: actualiza el contador en pantalla. Al alcanzar la meta de repeticiones
+     * libera la cámara y, tras 2,5 s, abre el resumen enviando duración, repeticiones, meta,
+     * identificador de la rutina y correcciones.
      *
      * @param reps Número de repeticiones válidas acumuladas.
      */
     @Override
     public void onRepeticion(int reps) {
         runOnUiThread(() -> {
-            txtContador.setText(reps + " / 12");
+            txtContador.setText(reps + " / " + metaRepeticiones);
 
-            if (reps < 12) {
+            if (reps < metaRepeticiones) {
                 if (sonidoActivado && tts != null) tts.speak(String.valueOf(reps), TextToSpeech.QUEUE_FLUSH, null, null);
             } else {
                 if (sonidoActivado && tts != null) tts.speak("¡Rutina completada! Excelente trabajo.", TextToSpeech.QUEUE_FLUSH, null, null);
@@ -225,7 +233,9 @@ public class CamaraGuiadaActivity extends AppCompatActivity implements Sentadill
                 manejador.postDelayed(() -> {
                     Intent intent = new Intent(CamaraGuiadaActivity.this, ResumenRutinaActivity.class);
                     intent.putExtra("duracion_seg", duracionSeg);
-                    intent.putExtra("repeticiones", 12);
+                    intent.putExtra("repeticiones", reps);
+                    intent.putExtra(RutinaAsignada.EXTRA_META, metaRepeticiones);
+                    intent.putExtra(RutinaAsignada.EXTRA_RUTINA_ID, rutinaId);
                     intent.putExtra("correcciones", correcciones);
                     startActivity(intent);
                     finish();
