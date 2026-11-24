@@ -34,6 +34,9 @@ import java.io.IOException;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
+import android.content.Intent;
+import android.util.Patterns;
+import com.example.kinapp.modelo.Usuario;
 
 /**
  * Actividad encargada del registro de nuevos usuarios y especialistas en el sistema.
@@ -159,12 +162,29 @@ public class RegistroActivity extends AppCompatActivity {
                     return;
                 }
 
-                UsuarioController.registrarUsuario(RegistroActivity.this, correo, pass, nombre, fecha, ubicacionFinal, exito -> {
+                if (!Patterns.EMAIL_ADDRESS.matcher(correo).matches()) {
+                    Toast.makeText(RegistroActivity.this, "El correo no tiene un formato válido", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (pass.length() < 6) {
+                    Toast.makeText(RegistroActivity.this, "La contraseña debe tener al menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                String rol = rbEspecialista.isChecked() ? Usuario.ROL_ESPECIALISTA : Usuario.ROL_PACIENTE;
+                btnRegistrar.setEnabled(false);
+
+                UsuarioController.registrarUsuario(correo, pass, nombre, fecha, ubicacionFinal, rol, (exito, mensaje) -> {
                     if (exito) {
-                        Toast.makeText(RegistroActivity.this, "Cuenta creada con éxito en " + ubicacionFinal, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(RegistroActivity.this, "Cuenta creada con éxito", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(RegistroActivity.this, PanelActivity.class);
+                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                        startActivity(intent);
                         finish();
                     } else {
-                        Toast.makeText(RegistroActivity.this, "El correo ya está registrado", Toast.LENGTH_LONG).show();
+                        btnRegistrar.setEnabled(true);
+                        Toast.makeText(RegistroActivity.this, mensaje, Toast.LENGTH_LONG).show();
                     }
                 });
             }
