@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "852828228926",
+    "firebase_url": "https://kinapp-9a016-default-rtdb.firebaseio.com",
     "project_id": "kinapp-9a016",
     "storage_bucket": "kinapp-9a016.firebasestorage.app"
   },
