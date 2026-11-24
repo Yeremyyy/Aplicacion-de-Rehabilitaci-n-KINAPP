@@ -23,8 +23,9 @@ import com.example.kinapp.modelo.RutinaAsignada;
 import com.example.kinapp.modelo.Usuario;
 
 /**
- * Actividad encargada de mostrar el resumen analítico y métricas de la rutina finalizada.
- * Permite confirmar y persistir los resultados en la base de datos de forma asíncrona.
+ * Actividad encargada de mostrar el resumen analítico y las métricas de la rutina finalizada.
+ * Al confirmar, guarda la sesión en SQLite (historial local) y la sincroniza con Firebase
+ * Realtime Database, marcando como completada la rutina asignada cuando corresponde.
  */
 public class ResumenRutinaActivity extends AppCompatActivity {
 
