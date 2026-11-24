@@ -17,6 +17,10 @@ import com.example.kinapp.R;
 import com.example.kinapp.controlador.ProgresoController;
 import java.util.Locale;
 import android.view.WindowManager;
+import com.example.kinapp.controlador.RutinaController;
+import com.example.kinapp.controlador.UsuarioController;
+import com.example.kinapp.modelo.RutinaAsignada;
+import com.example.kinapp.modelo.Usuario;
 
 /**
  * Actividad encargada de mostrar el resumen analítico y métricas de la rutina finalizada.
@@ -61,14 +65,16 @@ public class ResumenRutinaActivity extends AppCompatActivity {
         long duracionSeg = getIntent().getLongExtra("duracion_seg", 0);
         int repeticiones = getIntent().getIntExtra("repeticiones", 0);
         int correcciones = getIntent().getIntExtra("correcciones", 0);
+        int meta = getIntent().getIntExtra(RutinaAsignada.EXTRA_META, RutinaAsignada.REPETICIONES_POR_DEFECTO);
+        String rutinaId = getIntent().getStringExtra(RutinaAsignada.EXTRA_RUTINA_ID);
         int precision = Math.max(0, 100 - correcciones * 10);
 
         txtTiempo.setText(String.format(Locale.US, "%02d:%02d", duracionSeg / 60, duracionSeg % 60));
-        txtEjercicios.setText(repeticiones + " / 12");
         txtPrecision.setText(precision + "%");
+        txtEjercicios.setText(repeticiones + " / " + meta);
         txtReporte.setText(correcciones == 0
-                ? "Completaste las 12 sentadillas sin correcciones de profundidad. ¡Sigue así!"
-                : "Completaste las 12 sentadillas. El sistema te pidió bajar más la cadera "
+                ? "Completaste las " + meta + " sentadillas sin correcciones de profundidad. ¡Sigue así!"
+                : "Completaste las " + meta + " sentadillas. El sistema te pidió bajar más la cadera "
                 + correcciones + (correcciones == 1 ? " vez" : " veces")
                 + ". Intenta flexionar más las rodillas en la próxima rutina.");
 
@@ -78,6 +84,14 @@ public class ResumenRutinaActivity extends AppCompatActivity {
             btnFinalizarGuardar.setEnabled(false);
             ProgresoController.guardarRutinaCompletada(this, "Sentadillas", guardado -> {
                 if (guardado) {
+                    Usuario usuario = UsuarioController.getUsuarioActual();
+                    if (usuario != null) {
+                        RutinaController.guardarSesionNube(usuario.getUid(), rutinaId, repeticiones, meta,
+                                duracionSeg, correcciones, null);
+                        if (rutinaId != null) {
+                            RutinaController.completarRutina(usuario.getUid(), rutinaId, null);
+                        }
+                    }
                     Toast.makeText(ResumenRutinaActivity.this, "Progreso guardado correctamente", Toast.LENGTH_SHORT).show();
                     Intent intent = new Intent(ResumenRutinaActivity.this, ProgresoActivity.class);
                     intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
