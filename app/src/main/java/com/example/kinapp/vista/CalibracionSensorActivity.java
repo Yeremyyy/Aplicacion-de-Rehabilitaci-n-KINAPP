@@ -100,6 +100,7 @@ public class CalibracionSensorActivity extends AppCompatActivity implements Sens
                 @Override
                 public void run() {
                     Intent intent = new Intent(CalibracionSensorActivity.this, CamaraGuiadaActivity.class);
+                    intent.putExtras(getIntent());
                     startActivity(intent);
                     finish();
                 }
