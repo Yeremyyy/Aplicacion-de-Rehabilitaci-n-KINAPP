@@ -3,7 +3,7 @@ package com.example.kinapp.modelo;
 /**
  * Entidad que representa a un paciente o a un especialista en el sistema.
  * Pertenece a la capa Modelo y mantiene en memoria los datos del usuario con sesión activa,
- * cargados desde su documento de Firestore.
+ * cargados desde su nodo de Firebase Realtime Database.
  */
 public class Usuario {
 
