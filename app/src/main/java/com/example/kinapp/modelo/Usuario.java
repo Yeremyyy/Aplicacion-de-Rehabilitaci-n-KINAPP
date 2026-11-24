@@ -1,41 +1,50 @@
 package com.example.kinapp.modelo;
 
 /**
- * Clase modelo que representa la entidad de un paciente o especialista en el sistema.
- * Pertenece a la Capa Modelo de la arquitectura MVC.
- * Su objetivo principal es mantener el estado del usuario en memoria (ej. sesión activa)
- * facilitando el transporte de los datos extraídos de SQLite hacia los controladores y vistas.
+ * Entidad que representa a un paciente o a un especialista en el sistema.
+ * Pertenece a la capa Modelo y mantiene en memoria los datos del usuario con sesión activa,
+ * cargados desde su documento de Firestore.
  */
 public class Usuario {
-    private String correo;
-    private String contrasena;
-    private String nombre;
-    private String fechaNac;
-    private String telefono;
+
+    public static final String ROL_PACIENTE = "paciente";
+    public static final String ROL_ESPECIALISTA = "especialista";
+
+    private final String uid;
+    private final String correo;
+    private final String nombre;
+    private final String fechaNac;
+    private final String telefono;
+    private final String rol;
+    private final String especialistaId;
 
     /**
      * Construye e inicializa una nueva instancia de la entidad Usuario.
      *
-     * @param correo     Dirección de correo electrónico (actúa como identificador único).
-     * @param contrasena Clave de acceso del usuario.
-     * @param nombre     Nombre completo del paciente o especialista.
-     * @param fechaNac   Fecha de nacimiento almacenada en formato de texto.
-     * @param telefono   Número de contacto telefónico del usuario.
+     * @param uid            Identificador único asignado por Firebase Authentication.
+     * @param correo         Dirección de correo electrónico del usuario.
+     * @param nombre         Nombre completo del paciente o especialista.
+     * @param fechaNac       Fecha de nacimiento almacenada en formato de texto.
+     * @param telefono       Número de contacto telefónico del usuario.
+     * @param rol            Rol del usuario: {@link #ROL_PACIENTE} o {@link #ROL_ESPECIALISTA}.
+     * @param especialistaId Identificador del especialista asignado al paciente, o null si no tiene.
      */
-
-    public Usuario(String correo, String contrasena, String nombre, String fechaNac, String telefono) {
+    public Usuario(String uid, String correo, String nombre, String fechaNac,
+                   String telefono, String rol, String especialistaId) {
+        this.uid = uid;
         this.correo = correo;
-        this.contrasena = contrasena;
         this.nombre = nombre;
         this.fechaNac = fechaNac;
         this.telefono = telefono;
+        this.rol = rol;
+        this.especialistaId = especialistaId;
     }
+
+    /** @return String con el identificador único del usuario en Firebase. */
+    public String getUid() { return uid; }
 
     /** @return String correspondiente al correo electrónico registrado. */
     public String getCorreo() { return correo; }
-
-    /** @return String correspondiente a la contraseña del usuario. */
-    public String getContrasena() { return contrasena; }
 
     /** @return String correspondiente al nombre completo. */
     public String getNombre() { return nombre; }
@@ -45,4 +54,13 @@ public class Usuario {
 
     /** @return String correspondiente al número de teléfono. */
     public String getTelefono() { return telefono; }
+
+    /** @return String con el rol del usuario. */
+    public String getRol() { return rol; }
+
+    /** @return String con el identificador del especialista asignado, o null si no tiene. */
+    public String getEspecialistaId() { return especialistaId; }
+
+    /** @return true si el usuario tiene rol de especialista. */
+    public boolean esEspecialista() { return ROL_ESPECIALISTA.equals(rol); }
 }
