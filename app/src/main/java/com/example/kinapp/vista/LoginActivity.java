@@ -1,7 +1,6 @@
 package com.example.kinapp.vista;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -25,8 +24,8 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnCrearCuenta;
 
     /**
-     * Inicializa la interfaz, comprueba preferencias compartidas para restauración
-     * de sesión y configura los listeners de los botones de acceso y registro.
+     *Inicializa la interfaz y comprueba si Firebase
+     * conserva una sesión activa; si es así abre el panel, y si no muestra el formulario de acceso.
      *
      * @param savedInstanceState Estado guardado previo de la actividad.
      * @throws android.view.InflateException Si falla la carga del layout XML.
@@ -36,27 +35,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);
 
-        SharedPreferences prefs = getSharedPreferences("SesionKinApp", MODE_PRIVATE);
-        String correoGuardado = prefs.getString("correo_usuario", null);
-
-        if (correoGuardado != null) {
-            UsuarioController.restaurarSesion(LoginActivity.this, correoGuardado, exito -> {
-                if (exito) {
-                    Intent intent = new Intent(LoginActivity.this, PanelActivity.class);
-                    startActivity(intent);
-                    finish();
-                } else {
-                    SharedPreferences.Editor editor = prefs.edit();
-                    editor.clear();
-                    editor.apply();
-                    setContentView(R.layout.activity_login);
-                    inicializarVistas();
-                }
-            });
-        } else {
-            setContentView(R.layout.activity_login);
-            inicializarVistas();
-        }
+        UsuarioController.restaurarSesion(exito -> {
+            if (exito) {
+                irAlPanel();
+            } else {
+                setContentView(R.layout.activity_login);
+                inicializarVistas();
+            }
+        });
     }
 
     /**
@@ -87,22 +73,25 @@ public class LoginActivity extends AppCompatActivity {
                     return;
                 }
 
-                UsuarioController.validarLogin(LoginActivity.this, correo, pass, isValid -> {
-                    if (isValid) {
-                        SharedPreferences prefs = getSharedPreferences("SesionKinApp", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = prefs.edit();
-                        editor.putString("correo_usuario", correo);
-                        editor.apply();
-
+                btnIniciarSesion.setEnabled(false);
+                UsuarioController.validarLogin(correo, pass, (exito, mensaje) -> {
+                    if (exito) {
                         Toast.makeText(LoginActivity.this, "¡Bienvenido!", Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(LoginActivity.this, PanelActivity.class);
-                        startActivity(intent);
-                        finish();
+                        irAlPanel();
                     } else {
-                        Toast.makeText(LoginActivity.this, "Correo o contraseña incorrectos", Toast.LENGTH_LONG).show();
+                        btnIniciarSesion.setEnabled(true);
+                        Toast.makeText(LoginActivity.this, mensaje, Toast.LENGTH_LONG).show();
                     }
                 });
             }
         });
+    }
+
+    /**
+     * Abre el panel principal y cierra la pantalla de acceso.
+     */
+    private void irAlPanel() {
+        startActivity(new Intent(LoginActivity.this, PanelActivity.class));
+        finish();
     }
 }
