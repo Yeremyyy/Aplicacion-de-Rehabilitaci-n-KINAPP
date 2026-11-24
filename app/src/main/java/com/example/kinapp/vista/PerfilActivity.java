@@ -97,7 +97,7 @@ public class PerfilActivity extends AppCompatActivity {
                 builder.setPositiveButton("Guardar", (dialog, which) -> {
                     String nuevoTel = input.getText().toString().trim();
                     if (!nuevoTel.isEmpty()) {
-                        UsuarioController.actualizarTelefono(PerfilActivity.this, nuevoTel, exito -> {
+                        UsuarioController.actualizarTelefono(nuevoTel, exito -> {
                             if (exito) {
                                 cargarDatosPerfil();
                                 Toast.makeText(PerfilActivity.this, "Teléfono actualizado", Toast.LENGTH_SHORT).show();
@@ -112,35 +112,10 @@ public class PerfilActivity extends AppCompatActivity {
             }
         });
 
-        btnCambiarPass.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(PerfilActivity.this);
-                builder.setTitle("Nueva contraseña");
-                final EditText input = new EditText(PerfilActivity.this);
-                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                builder.setView(input);
-
-                builder.setPositiveButton("Actualizar", (dialog, which) -> {
-                    String nuevaPass = input.getText().toString().trim();
-                    if (!nuevaPass.isEmpty()) {
-                        UsuarioController.actualizarContrasena(PerfilActivity.this, nuevaPass, exito -> {
-                            if (exito) {
-                                Toast.makeText(PerfilActivity.this, "Contraseña actualizada con éxito", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(PerfilActivity.this, "Error al actualizar contraseña", Toast.LENGTH_SHORT).show();
-                            }
-                        });
-                    }
-                });
-                builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
-                builder.show();
-            }
-        });
+        btnCambiarPass.setOnClickListener(v -> mostrarDialogoContrasena());
 
         btnCerrarSesion.setOnClickListener(v -> {
             UsuarioController.cerrarSesion();
-            getSharedPreferences("SesionKinApp", MODE_PRIVATE).edit().clear().apply();
             Intent intent = new Intent(PerfilActivity.this, LoginActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(intent);
@@ -182,4 +157,46 @@ public class PerfilActivity extends AppCompatActivity {
             txtFechaValor.setText(u.getFechaNac() != null && !u.getFechaNac() .isEmpty() ? u.getFechaNac() : "No especificada");
         }
     }
+
+/**
+ * Muestra un diálogo que pide la contraseña actual y la nueva, y solicita el cambio
+ * a Firebase con reautenticación.
+ */
+private void mostrarDialogoContrasena() {
+    LinearLayout contenedor = new LinearLayout(this);
+    contenedor.setOrientation(LinearLayout.VERTICAL);
+    int margen = (int) (20 * getResources().getDisplayMetrics().density);
+    contenedor.setPadding(margen, margen / 2, margen, 0);
+
+    EditText etActual = new EditText(this);
+    etActual.setHint("Contraseña actual");
+    etActual.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+    contenedor.addView(etActual);
+
+    EditText etNueva = new EditText(this);
+    etNueva.setHint("Nueva contraseña (mínimo 6 caracteres)");
+    etNueva.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+    contenedor.addView(etNueva);
+
+    new AlertDialog.Builder(this)
+            .setTitle("Cambiar contraseña")
+            .setView(contenedor)
+            .setPositiveButton("Actualizar", (dialogo, which) -> {
+                String actual = etActual.getText().toString().trim();
+                String nueva = etNueva.getText().toString().trim();
+                if (actual.isEmpty() || nueva.length() < 6) {
+                    Toast.makeText(PerfilActivity.this,
+                            "Completa ambos campos; la nueva debe tener al menos 6 caracteres",
+                            Toast.LENGTH_LONG).show();
+                    return;
+                }
+                UsuarioController.actualizarContrasena(actual, nueva, (exito, mensaje) ->
+                        Toast.makeText(PerfilActivity.this,
+                                exito ? "Contraseña actualizada con éxito" : mensaje,
+                                Toast.LENGTH_LONG).show());
+            })
+            .setNegativeButton("Cancelar", (dialogo, which) -> dialogo.cancel())
+            .show();
+}
+
 }
