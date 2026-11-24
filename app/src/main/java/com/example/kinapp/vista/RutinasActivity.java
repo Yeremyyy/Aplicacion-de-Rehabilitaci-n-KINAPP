@@ -23,7 +23,7 @@ public class RutinasActivity extends AppCompatActivity {
 
     /**
      * Inicializa la lista de rutinas con datos de ejemplo y configura la navegación inferior.
-     * Será reemplazada por la rutina asignada por el especialista desde Firestore.
+     * Será reemplazada por la rutina asignada por el especialista desde Realtime Database.
      *
      * @param savedInstanceState Estado guardado previo de la actividad.
      * @throws android.view.InflateException Si falla la carga del layout XML.
