@@ -32,6 +32,7 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
 
     private static final float UMBRAL_CONFIANZA = 0.6f;
     private int correcciones = 0;
+    private final int metaRepeticiones;
 
     /**
      * Indica cuántos avisos de profundidad se emitieron durante la rutina.
@@ -55,10 +56,12 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
     /**
      * Inicializa el analizador configurando el modelo de ML Kit en modo de alta precisión (STREAM_MODE).
      *
-     * @param listener Instancia de la interfaz que escuchará y manejará los eventos de la cámara en CamaraGuiadaActivity.
+     * @param listener         Instancia de la interfaz que escuchará y manejará los eventos de la cámara.
+     * @param metaRepeticiones Cantidad de repeticiones que completan la rutina.
      */
-    public SentadillaAnalizador(SentadillaListener listener) {
+    public SentadillaAnalizador(SentadillaListener listener, int metaRepeticiones) {
         this.listener = listener;
+        this.metaRepeticiones = metaRepeticiones;
         AccuratePoseDetectorOptions options = new AccuratePoseDetectorOptions.Builder()
                 .setDetectorMode(AccuratePoseDetectorOptions.STREAM_MODE)
                 .build();
@@ -114,7 +117,7 @@ public class SentadillaAnalizador implements ImageAnalysis.Analyzer {
      * @param pose Objeto devuelto por ML Kit que contiene los 33 puntos clave (Landmarks) del esqueleto.
      */
     private void procesarPose(Pose pose) {
-        if (!rutinaIniciada || repeticiones >= 12) return;
+        if (!rutinaIniciada || repeticiones >= metaRepeticiones) return;
 
         PoseLandmark[] pierna = seleccionarPierna(pose);
         if (confianzaMinima(pierna) < UMBRAL_CONFIANZA) return;
